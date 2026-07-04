@@ -1,0 +1,2326 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width,initial-scale=1" name="viewport"/>
+    <title>APP 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      :root{
+        --color-primary:#3b82f6;
+        --color-primary-dark:#1e3a8a;
+        --color-glow:#60a5fa;
+        --bg:#0b1220;
+        --card:#0f1724;
+        --muted:#9ca3af;
+        --text:#e6f0ff;
+      }
+      html,body{
+        height:100%;
+        font-size:24px;
+      }
+      body{
+        margin:0;
+        font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        background:var(--bg);
+        color:var(--text);
+        -webkit-font-smoothing:antialiased;
+        -moz-osx-font-smoothing:grayscale;
+      }
+      body:before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background: rgba(7,11,20,0.50);
+        pointer-events:none;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }     
+      body.has-image-bg:before {
+        opacity:1;
+      }
+      [data-theme='dark']body.has-image-bg .lesson-container,
+      [data-theme='dark']body.has-image-bg .chat-area {
+        background:rgba(15,23,36,0.92);
+        backdrop-filter:blur(8px) saturate(120%);
+        -webkit-backdrop-filter:blur(8px) saturate(120%);
+        border-color:rgba(96,165,250,0.12);
+      }
+      [data-theme='dark']body.has-image-bg .card {
+        background:rgba(15,23,36,0.88);
+        backdrop-filter:blur(6px);
+        -webkit-backdrop-filter:blur(6px);
+      }
+      .max-w-4xl{
+        max-width:64rem;
+        margin-left:auto;
+        margin-right:auto;
+      }
+      .px-6{
+        padding-left:1.5rem;
+        padding-right:1.5rem;
+      }
+      .py-8{
+        padding-top:2rem;
+        padding-bottom:2rem;
+      }
+      .pb-footer{
+        padding-bottom:5.5rem;
+      }
+      header{
+        position:sticky;
+        top:0;
+        z-index:50;
+        background:linear-gradient(180deg, var(--bg) 0%, rgba(11, 18, 32, 0.95), 100%);
+        border-bottom:1px solid rgba(96,165,250,0.08);
+        backdrop-filter:blur(12px);
+        -webkit-backdrop-filter:blur(12px);
+      }
+      .brand{
+        font-weight:800;
+        color:var(--text);
+      }
+      .card{
+        background:linear-gradient(180deg, var(--card), rgba(10,14,22,0.8));
+        border-radius:0.85rem;
+        border:1px solid rgba(96,165,250,0.06);
+        box-shadow:0 10px 30px rgba(2,6,23,0.6);
+        transition:transform .28s cubic-bezier(.2,.9,.2,1), box-shadow .28s;
+      }
+      .card:hover{
+        transform:translateY(-6px);
+        box-shadow:0 22px 50px rgba(96,165,250,0.08);
+        border-color:rgba(96,165,250,0.12);
+      }
+      .btn{
+        background:transparent;
+        color:var(--text);
+        border-radius:0.65rem;
+        padding:0.6rem 1rem;
+        border:1px solid rgba(96,165,250,0.06);
+        cursor:pointer;
+        font-weight:600;
+        box-shadow:0 6px 18px rgba(2,6,23,0.6); 
+        transition:all .18s ease;
+      }
+      .btn:hover{
+        box-shadow:0 8px 22px rgba(96,165,250,0.06);
+        transform:translateY(-2px);
+      }
+      .btn-primary{
+        background:var(--color-primary);
+        border:none;
+      }
+      .btn-primary:hover{
+        background:var(--color-primary-dark);
+      }
+      .btn-success{
+        background:#059669;
+        border:none;
+      }
+      .btn-success:hover{
+        background:#047857;
+      }
+      .btn-danger{
+        background:#dc2626;
+        border:none
+      }
+      .btn-danger:hover{
+        background:#b91c1c;
+      }
+      .btn-warning{
+        background:#d97706;
+        border:none;
+      }
+      .btn-warning:hover{
+        background:#b45309;
+      }
+      .selected{
+        box-shadow:0 0 18px rgba(96,165,250,0.12);
+        border-color:var(--color-primary);
+      }
+      .message-wrapper{
+        display:flex;
+        align-items:flex-end;
+        gap:.5rem;
+        margin:.5rem 0;
+      }
+      .user-wrapper{
+        justify-content:flex-end;
+      }
+      .message-avatar{
+        width:34px;
+        height:34px;
+        border-radius:50%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight:700;
+        flex-shrink:0;
+        font-size:12px;
+      }
+      .bot-avatar{
+        background:var(--color-primary-dark);
+        color:white;
+      }
+      .user-avatar{
+        background:var(--color-glow);
+        color:white;
+      }
+      .message-bubble{
+        padding:0.6rem 0.9rem;
+        border-radius:14px;
+        max-width:90%;
+        line-height:1.6;
+        font-size:0.9em;
+      }
+      .bot-message{
+        background:rgba(96,165,250,0.08);
+        color:var(--text);
+      }
+      .user-message{
+        background:var(--color-primary-dark);
+        color:white;
+        align-self:flex-end;
+      }
+      footer.global-nav{
+        position:fixed;
+        left:0;
+        right:0;
+        bottom:0;
+        background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+        border-top:1px solid rgba(96,165,250,0.04);
+        padding:0.5rem 0;
+        backdrop-filter:blur(6px);
+        height:auto;
+        z-index:50;
+      }
+      .nav-item{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        color:var(--muted);
+        font-size:0.78rem;
+        gap:0.25rem;
+        padding:0.35rem 0.5rem;
+        cursor:pointer;
+      }
+      .nav-item:hover{
+        color:var(--text);
+      }
+      @keyframes fadeInUp{ from {
+        opacity:0;
+        transform:translateY(18px);} to {
+        opacity:1;
+        transform:translateY(0);} }
+      .fade-in{
+        opacity:0;
+        animation:fadeInUp .56s cubic-bezier(.2,.9,.2,1) forwards;
+      }
+      .stagger > *{
+        opacity:0;
+      }
+      .stagger.show > *{
+        animation:fadeInUp .56s cubic-bezier(.2,.9,.2,1) forwards;
+      }
+      .stagger.show > *:nth-child(1){
+        animation-delay:.05s;
+      }
+      .stagger.show > *:nth-child(2){
+        animation-delay:.12s;
+      }
+      .stagger.show > *:nth-child(3){
+        animation-delay:.2s;
+      }
+      .stagger.show > *:nth-child(4){
+        animation-delay:.28s;
+      }
+      .stagger.show > *:nth-child(5){
+        animation-delay:.36s;
+      }
+      @media (max-width:640px){
+        .max-w-4xl{
+          padding-left:1rem;
+          padding-right:1rem;
+        }
+        .message-bubble{
+          max-width:78%;
+        }
+      }
+      .lesson-container{
+        max-height:70vh;
+        overflow-y:auto;
+        padding:1rem;
+        border-radius:0.75rem;
+        border:1px solid rgba(96,165,250,0.08);
+        background:rgba(255,255,255,0.01);
+      }
+      .lesson-section{
+        margin-bottom:1.5rem;
+        padding-bottom:1rem;
+        border-bottom:1px solid rgba(96,165,250,0.06);
+      }
+      .lesson-section:last-child{
+        border-bottom:none;
+      }
+      .lesson-heading{
+        color:var(--color-glow);
+        font-weight:700;
+        font-size:1.1rem;
+        margin-bottom:0.5rem;
+        display:flex;
+        align-items:center;
+        gap:0.5rem;
+      }
+      .lesson-body{
+        color:#cbd5e1;
+        line-height:1.7;
+        font-size:0.9em;
+      }
+      .lesson-image{
+        max-width:100%;
+        border-radius:0.5rem;
+        margin:0.75rem 0;
+        border:1px solid rgba(96,165,250,0.1);
+      }
+      .lesson-caption{
+        font-size:0.75rem;
+        color:var(--muted);
+        text-align:center;
+        font-style:italic;
+      }
+      .hidden{
+        display:none;
+      }
+      .chat-area{
+        max-height:55vh;
+        overflow-y:auto;
+        padding:1rem;
+        border-radius:0.75rem;
+        border:1px solid rgba(96,165,250,0.08);
+        background:rgba(255,255,255,0.01);
+        margin-bottom:1rem;
+      }
+      .chat-input-area{
+        display:flex;
+        gap:0.5rem;
+        align-items:flex-start;
+      }
+      .chat-textarea{
+        flex:1;
+        background:var(--card);
+        color:var(--text);
+        border:1px solid rgba(96,165,250,0.15);
+        border-radius:0.65rem;
+        padding:0.6rem 0.9rem;
+        font-family:inherit;
+        font-size:0.9em;
+        resize:none;
+        min-height:44px;
+        max-height:120px;
+        outline:none; 
+      }
+      .chat-textarea:focus{
+        border-color:var(--color-primary); 
+        box-shadow:0 0 0 2px rgba(59,130,246,0.2);
+      }
+      .chat-send-btn{
+        background:var(--color-primary);
+        color:white;
+        border:none;
+        border-radius:0.65rem;
+        padding:0.6rem 1.2rem;
+        cursor:pointer; 
+        font-weight:600;
+        transition:all .18s ease;
+        align-self:flex-end;
+      }
+      .chat-send-btn:hover{
+        background:var(--color-primary-dark);
+      }
+      .chat-send-btn:disabled{
+        opacity:0.5;
+        cursor:not-allowed;
+      }
+      .typing-indicator{
+        display:flex; 
+         gap:0.25rem;
+        padding:0.5rem 0;
+      }
+      .typing-dot{
+        width:6px;
+        height:6px;
+        background:var(--muted);
+        border-radius:50%;
+        animation:typingBounce 1.4s infinite ease-in-out both;
+      }
+       .typing-dot:nth-child(1){
+         animation-delay:-0.32s;
+       }
+      .typing-dot:nth-child(2){
+        animation-delay:-0.16s; 
+      }
+      @keyframes typingBounce{0%,80%,100% {
+        transform:scale(0); } 40%{
+        transform:scale(1); } }
+      .review-card{
+        padding:0.75rem;
+        border-radius:0.5rem;
+        margin-bottom:0.5rem;
+      }
+      .review-correct{
+        background:rgba(5,150,105,0.1); 
+        border:1px solid rgba(5,150,105,0.2);
+      }
+      .review-wrong{ 
+        background:rgba(220,38,38,0.1); 
+        border:1px solid rgba(220,38,38,0.2); 
+      }
+      .test-btn{ 
+        padding:0.5rem 1rem;
+        border-radius:0.5rem; 
+        font-size:0.85rem; 
+        font-weight:600; 
+        cursor:pointer; 
+        transition:all .2s ease; 
+        margin:0.25rem; 
+      }
+      .test-btn-lesson{
+        background:rgba(59,130,246,0.15); 
+        border:1px solid rgba(59,130,246,0.3); 
+        color:#93c5fd;
+      }
+      .test-btn-lesson:hover{
+        background:rgba(59,130,246,0.25);
+      }
+      .test-btn-summative{
+        background:rgba(217,119,6,0.15); 
+        border:1px solid rgba(217,119,6,0.3); 
+        color:#fbbf24; 
+      }
+      .test-btn-summative:hover{
+        background:rgba(217,119,6,0.25);
+      }
+      .quiz-stats{
+        display:flex;
+        justify-content:space-between;
+        font-size:0.8rem;
+        color:var(--muted);
+        margin-bottom:0.75rem;
+      }
+      .quiz-progress{
+        display:flex; 
+        gap:0.25rem;
+        margin-bottom:1rem;
+      }
+      .quiz-dot{
+        width:8px;
+        height:8px; 
+        border-radius:50%; 
+        background:rgba(96,165,250,0.2); 
+      }
+      .quiz-dot.active{
+        background:var(--color-primary);
+      }
+      .quiz-dot.answered{
+        background:#059669;
+      }
+      .quiz-dot.wrong{
+        background:#dc2626; 
+      }
+      .qtype-badge{
+        display:inline-block;
+        padding:0.15rem 0.5rem;
+        border-radius:0.25rem; 
+        font-size:0.7rem; 
+        font-weight:700;
+        text-transform:uppercase; 
+        margin-bottom:0.5rem;
+      }
+      .qtype-identification{
+        background:rgba(59,130,246,0.15); 
+        color:#93c5fd;
+      }
+      .qtype-multiplechoice{
+        background:rgba(168,85,247,0.15); 
+        color:#d8b4fe;
+      }
+      .qtype-truefalse{
+        background:rgba(217,119,6,0.15); 
+        color:#fbbf24;
+      }
+      .qtype-fillblank{
+        background:rgba(236,72,153,0.15);
+        color:#f9a8d4;
+      }
+      .qtype-matching{
+        background:rgba(14,165,233,0.15);
+        color:#7dd3fc; 
+      }
+      .hint-text{
+        color:var(--muted); 
+        font-size:0.8rem; 
+        margin-top:0.5rem;
+        font-style:italic;
+      }
+      #nav-menu{
+        transition:opacity 0.3s ease, transform 0.3s ease;
+        transform-origin:bottom-left;
+      }
+      #nav-menu.hidden{
+        opacity:0;
+        transform:scale(0.95);
+        pointer-events:none;
+      }
+      #nav-menu:not(.hidden){
+        opacity:1;
+        transform:scale(1);
+        pointer-events:auto;
+      }
+
+      .modal-title{
+        font-size:1.25rem;
+        font-weight:700;
+        color:var(--color-glow);
+        margin-bottom:1rem;
+      }
+      .modal-section{
+        margin-bottom:1.25rem;
+      }
+      .modal-section h4{
+        color:var(--text);
+        font-weight:600;
+        margin-bottom:0.5rem;
+      }
+      .modal-section p, .modal-section li{
+        color:#cbd5e1;
+        font-size:0.9em;
+        line-height:1.6;
+      }
+      .lab-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
+        gap:0.75rem;
+        margin-top:0.75rem;
+      }
+      .lab-btn{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:0.5rem;
+        padding:1rem;
+        background:rgba(96,165,250,0.08);
+        border:1px solid rgba(96,165,250,0.15);
+        border-radius:0.75rem;
+        color:var(--text);
+        cursor:pointer;
+        transition:all 0.2s ease;
+        text-decoration:none;
+      }
+      .lab-btn:hover{
+        background:rgba(96,165,250,0.15);
+        border-color:var(--color-primary);
+        transform:translateY(-2px);
+      }
+      .lab-btn .icon{
+        font-size:1.5rem;
+      }
+      .lab-btn .label{
+        font-size:0.8rem;
+        font-weight:600;
+      }
+      .setting-row{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding:0.75rem 0;
+        border-bottom:1px solid rgba(96,165,250,0.06);
+      }
+      .setting-row:last-child{
+        border-bottom:none;
+      }
+      .setting-label{
+        color:var(--text);
+        font-size:0.9rem;
+      }
+      .toggle-switch{
+        position:relative;
+        width:44px;
+        height:24px;
+        background:rgba(96,165,250,0.2);
+        border-radius:12px;
+        cursor:pointer;
+        transition:background 0.3s;
+      }
+      .toggle-switch.active{
+        background:var(--color-primary);
+      }
+      .toggle-switch::after{
+        content:'';
+        position:absolute;
+        width:18px;
+        height:18px;
+        background:white;
+        border-radius:50%;
+        top:3px;
+        left:3px;
+        transition:transform 0.3s;
+      }
+      .toggle-switch.active::after{
+        transform:translateX(20px);
+      }
+      .theme-grid{
+        display:grid;
+        grid-template-columns:repeat(3, 1fr);
+        gap:0.5rem;
+        margin-top:0.5rem;
+      }
+      .theme-btn{
+        padding:0.5rem;
+        border-radius:0.5rem;
+        border:2px solid transparent;
+        cursor:pointer;
+        font-size:0.75rem;
+        text-align:center;
+        transition:all 0.2s ease;
+      }
+      .theme-btn.selected{
+        border-color:var(--color-primary);
+        box-shadow:0 0 10px rgba(96,165,250,0.2);
+      }
+      .font-size-options{
+        display:flex;
+        gap:0.5rem;
+        margin-top:0.5rem;
+      }
+      .font-btn{
+        padding:0.4rem 0.8rem;
+        border-radius:0.4rem;
+        border:1px solid rgba(96,165,250,0.2);
+        background:transparent;
+        color:var(--text);
+        cursor:pointer;
+        font-size:0.8rem;
+        transition:all 0.2s;
+      }
+      .font-btn.selected{
+        background: var(--color-primary);
+        border-color:var(--color-primary);
+      }
+      [data-theme="light"] {
+        .text-gray-400,
+        [class*="text-gray-4"] {color:#64748b;}
+
+        .text-blue-100 {color:#111827;}
+        .text-blue-200 {color:#ffffff;}
+
+        .text-blue-300 {color:#ffffff;}
+
+        .text-blue-400 {color:#111827;}
+
+        .text-white-300 {color:#111827;}
+
+        .bot-message {
+          background:#f3f4f6;
+          color:#111827;
+          border:1px solid #e5e7eb;
+        }
+
+        .user-message {
+          background:#111827;
+          color:#ffffff;
+        }
+
+        .card {
+          background:linear-gradient(180deg, #ffffff, #f9fafb);
+          border-color:#e5e7eb;
+          box-shadow:0 10px 30px rgba(0,0,0,0.08);
+        }   
+
+        .card:hover {
+          border-color:#d1d5db;
+          box-shadow:0 22px 50px rgba(0,0,0,0.12);
+        }
+
+        .chat-textarea {
+          background:#ffffff;
+          color:#111827;
+          border-color:#d1d5db;
+        }
+
+        .chat-textarea:focus {
+          border-color:#111287;
+          box-shadow:0 0 0 2px rgba(0,0,0,0.1);
+        }
+
+        #modal-content {
+          background:#ffffff;
+          border-color:#e5e7eb;
+        }
+
+        .modal-section p,
+        .modal-section li,
+        .lesson-body,
+        .setting-label {
+          color:#374151;
+        }
+
+        .modal-title,
+        .lesson-heading {
+          color:#111827;
+        }
+
+        .btn {
+          background:#f3f4f6;
+          color:#111287;
+          border-color:#e5e7eb;
+        }
+
+        .btn:hover {
+          background:#e5e7eb;
+          border-color:#d1d5db;
+        }
+
+        .btn-primary {
+          background:#111287;
+          color:#ffffff;
+          border:none;
+        }
+
+        .btn-primary:hover {
+          background:#374151;
+        }
+
+        .btn-success {
+          background:#111287;
+          color:#ffffff;
+        }
+
+        .btn-danger {
+          background:#7f1d1d;
+          color:#ffffff;
+        }
+
+        .btn-warning {
+          background:#92400e;
+          color:#ffffff;
+        }
+
+        .review-correct {
+          background:#f3f4f6;
+          border-color:#111287;
+        }
+
+        .review-wrong {
+          background:#fef2f2;
+          border-color:#dc2626;
+        }
+
+        .quiz-dot.active {
+          background:#111287;
+        }
+
+        .quiz-dot.answered {
+          background:#111287;
+        }
+
+        .quiz-dot.wrong {
+          background:#dc2626;
+        }
+
+        .test-button-lesson {
+          background:#f3f4f6;
+          border-color:#d1d5db;
+          color:#111827;
+        }
+
+        .test-btn-summative {
+          background:#f3f4f6;
+          border-color:#d1d5db;
+          color:#111827;
+        }
+
+        .qtype-badge {
+          background:#f3f4f6;
+          color:#374151;
+        }
+
+        header {
+          background:linear-gradient(180deg, rgba(0,0,0,0.02), transparent);
+          border-bottom-color:#e5e7eb;
+        }
+
+        footer.global-nav {
+          background:rgba(255,255,255,0.95);
+          border-top-color:#e5e7eb;
+        }
+
+
+        .nav-item {
+          color:#6b7280;
+        }
+
+        .nav-item:hover {
+          color:#111827;
+        }
+
+        .nav-menu {
+          background:#ffffff;
+          border-color:#e5e7eb;
+        }
+
+        .toggle-switch {
+          background:#d1d5db;
+        }
+
+        .toggle-switch.active {
+          background:#111827;
+        }
+
+        .selected {
+          border-color:#111827;
+          box-shadow:0 0 18px rgba(0,0,0,0.08);
+        }
+
+        .typing-dot {
+          bakcground:#9ca3af;
+        }
+
+        .hint-text {
+          color:#6b7280;
+        }
+
+        #step-indicator {
+          color:#ffffff;
+        }
+
+        #session-timeline-clock {
+          color:#ffffff;
+          border-color:#e5e7eb;
+        }
+
+        .mcq-option {
+          background:#f9fafb;
+          border-color:#e5e7eb;
+          color:#111827;
+        }
+
+        .lesson-container,
+        .chat-area {
+          background:#f9fafb;
+          border-color:#e5e7eb;
+        }
+
+        .brand {
+          color:#ffffff;
+        }
+
+        #step-title {
+          color:#ffffff
+        }
+
+        #modal-title {
+          color:#111827;
+        }
+
+        h4 {
+          color:#111827;
+        }
+
+        #nav-menu {
+          background:#ffffff;
+        }
+
+        .label {
+          color:#111827;
+        }
+
+        #step-breadcrumb {
+          color:#ffffff;
+        }
+
+        .font-btn {
+          color:#111827;
+        }
+      }
+
+      .media-wrapper{
+        display:flex;
+        flex-direction:column;
+        align-items:stretch;
+        justify-content:center;
+        margin:1rem 0;
+        text-align:center;
+        width:100%;
+      }
+      .media-wrapper img,
+      .media-wrapper iframe{
+        max-width:100%;
+        width:100%;
+        border-radius:0.5rem;
+        border:1px solid rgba(96,165,250,0.15);
+      }
+      .media-wrapper .lesson-caption{
+        margin-top:0.5rem;
+        font-size:0.75rem;
+        color:var(--muted);
+        font-style:italic;
+      }
+      .video-container{
+        position:relative;
+        padding-bottom:56.25%;
+        height:0;
+        overflow:hidden;
+        max-width:100%;
+        width:100%;
+        border-radius:0.5rem;
+      }
+      .video-container iframe{
+        position:absolute;
+        top:0;
+        left:0;
+        width:100%;
+        height:100%;
+        border:none;
+      }
+        
+        
+    </style>
+  </head>
+
+  <body class="min-h-screen pb-footer">
+
+    <header class="sticky top-0 z-40">
+      <div class="w-full px-8 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="brand flex items-center gap-3">
+            <span class="font-bold text-lg">APP 2026</span>
+            <span class="border-1 border-white/20 pl-3 font-mono text-xs text-blue-300" id="session-timeline-clock">--:-- - --:--:--</span>
+          </div>
+        </div>
+        <div class="text-sm text-blue-200 font-medium tracking-wide" id="step-indicator">Step 1 of 4</div>
+      </div>
+    </header>
+
+    <main class="max-w-4xl px-6 py-8" id="main-content">
+
+      <section class="text-center mb-8">
+        <h1 class="text-3xl font-extrabold text-blue-100 mb-2" id="step-title">Select a Topic</h1>
+        <p class="text-sm text-gray-400  mb-4" id="step-breadcrumb"></p>
+      </section>
+
+      <div class="mb-6 flex justify-between items-center">
+        <div class="hidden" id="back-button"><button class="btn" onclick="handleBack()">Back</button></div>
+        <div class="hidden" id="reset-button"><button class="btn" onclick="resetSelections()">Reset</button></div>
+      </div>
+
+      <div class="grid gap-6" id="step-0">
+        <div class="card p-6 cursor-pointer" id="topic-science" role="button" tabIndex="0">
+          <div class="flex items-center justify-between">
+            <div><h3 class="text-xl font-bold text-blue-100">Science</h3><p class="text-sm text-gray-400 mt-1">Explore Physics, Chemistry and Biology</p></div>
+            <div class="text-3xl">👩🏻‍🔬</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hidden grid grid-cols-1 md:grid-cols-3 gap-6" id="step-1"></div>
+
+      <div class="hidden grid grid-cols-1 md:grid-cols-2 gap-6" id="step-2">
+      <div class="card p-6 text-center cursor-pointer" id="mode-descriptor" role="button" tabIndex="0">
+        <div class="text-4xl mb-2">📖</div>
+        <h3 class="font-bold text-lg text-blue-100">Descriptor-Based</h3>
+        <p class="text-sm text-gray-400">Explanations and Discussions</p>
+      </div>
+      <div class="card p-6 text-center cursor-pointer" id="mode-skill" role="button" tabIndex="0">
+        <div class="text-4xl mb-2">📝</div>
+        <h3 class="font-bold text-lg text-blue-100">Skill-Based</h3>
+        <p class="text-sm text-gray-400">Quizzes and Assessments</p>
+      </div>
+      </div>
+
+      <div class="hidden grid grid-cols-1 md:grid-cols-3 gap-4" id="step-3a"></div>
+
+      <div class="hidden grid grid-cols-1 md:grid-cols-3 gap-4" id="step-3b"></div>
+
+      <div class="hidden" id="step-4">
+
+        <div id="descriptor-panel" class="hidden">
+          <div class="card p-4 mb-4">
+            <div class="flex items-center gap-3">
+              <div class="text-xl">📖</div>
+              <div>
+                <div class="font-bold text-blue-100" id="lesson-title">Learning Content</div>
+                <div class="text-xs text-gray-400" id="lesson-subtitle">Select a module below</div>
+              </div>
+            </div>
+          </div>
+          <div class="mb-4 flex flex-wrap gap-2" id="module-buttons"></div>
+          <div class="lesson-container" id="lesson-content"></div>
+        </div>
+
+        <div id="skill-panel" class="hidden">
+          <div class="card p-4 mb-4">
+            <div class="flex items-center gap-3">
+              <div class="text-xl">📝</div>
+              <div>
+                <div class="font-bold text-blue-100" id="quiz-title">Skill Assessment</div>
+                <div class="text-xs text-gray-400" id="quiz-subtitle">Choose a test</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lesson-container" id="skill-content-area">
+
+            <div id="test-selection-area">
+              <div class="lesson-section">
+                <div class="lesson-heading">📝</div>
+                <div class="lesson-body">Select a test below to start and type your answers in the chat.</div>
+                <div id="test-buttons-container" class="mt-4 flex flex-wrap"></div>
+              </div>
+            </div>
+
+            <div id="chat-section" class="hidden">
+              <div class="quiz-stats" id="quiz-stats-bar">
+                <span>Question <span id="current-q-num">1</span> of <span id="total-q-num">10</span></span>
+                <span>Score: <span id="score-display">0</span>/<span id="total-attempted">0</span></span>
+              </div>
+              <div class="quiz-progress" id="quiz-progress"></div>
+              <div class="chat-area" id="chat-area"></div>
+            </div>
+
+            <div id="quiz-complete" class="hidden text-center py-8">
+              <div class="text-5xl mb-4">🎉</div>
+              <h3 class="text-xl font-bold text-blue-100 mb-2">Quiz Complete!</h3>
+              <p class="text-gray-400 mb-4">You scored <span id="final-score">0</span> out of <span id="final-total">0</span></p>
+              <div class="card p-4 mb-4 text-left" id="review-section">
+                <h4 class="font-bold text-blue-200 mb-2">⭐ Review Your Answers</h4>
+                <div id="review-list"></div>
+              </div>
+              <div class="flex gap-3 justify-center">
+                <button class="btn btn-primary" onclick="restartQuiz()">Restart Quiz</button>
+                <button class="btn" onclick="backToTestSelection()">Back to Tests</button>
+                <button class="btn" onclick="resetSelections()">Back to Home</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-input-area mt-4" id="chat-input-wrapper">
+            <textarea class="chat-textarea" id="chat-textarea" rows="1" placeholder="Type your answer here..." onkeydown="handleChatKeydown(event)"></textarea>
+            <button class="chat-send-btn" id="chat-send-btn" onclick="submitChatAnswer()">Send</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div id="modal-overlay" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4" style="background:rgba(2,6,23,0.85); backdrop-filter:blur(4px);">
+      <div id="modal-content" class="bg-[#0f1724] border border-[rgba(96,165,250,0.12)] rounded-xl shadow-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto p-6 relative fade-in">
+        <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">&times;</button>
+        <div id="modal-body"></div>
+      </div>
+    </div>
+
+      <div class="fixed bottom-4 left-4 z-50">
+        <button id="menu-toggle" class="btn" onclick="toggleNavMenu()" title="Toggle Menu">
+          <span id="menu-icon">☰</span>
+        </button>
+      </div>
+
+      <div id="nav-menu" class="hidden fixed bottom-16 left-4 z-50 flex flex-col gap-2 bg-[#0f1724] p-3 rounded-xl border border-[rgba(96,165,250,0.12)] shadow-lg">
+        <div class="nav-item" onclick="goHome()"><div>🏠︎</div><div>Home</div></div>
+        <div class="nav-item" onclick="showAbout()"><div>🛈</div><div>About</div></div>
+        <div class="nav-item cursor-pointer" onclick="showLab()"><div>🧪</div><div>Lab</div></div>
+        <div class="nav-item" onclick="showSettings()"><div>⛭</div><div>Settings</div></div>
+      </div>
+   
+    <script>
+
+      
+   const topics = [
+     {id:'science', title:'Science', subtopics:[
+       {id:'physics', title:'Physics', description:'To be followed'},
+       {id:'chemistry', title:'Chemistry', description:'To be followed'},
+       {id:'biology', title:'Biology', description:'To be followed'}
+       ]}
+     ];
+      
+      const proficiencyLevels = [
+        {level:1, descriptor:'Cognitive'},
+        {level:2, descriptor:'Affective'},
+        {level:3, descriptor:'Psychomotor'}
+      ];
+      
+      const skillLevels = [
+        {level:1, label:'True or False'},
+        {level:2, label:'Identification & Fill in the Blanks'},
+        {level:3, label:'Multiple Choice'}
+      ];
+      
+      const stepTitles = ['Select Topic','Select Branch','Select Mode','Select Level','Learning'];
+      
+      const skillQuestions = {
+        chemistry_1: {
+          'Lesson 1 - Use of Models': [
+            {type:'identification', q:'What tool do scientists use for complex ideas?', a:'models', media:{type:'image', url:'https://i.imgur.com/lpAG8Gm.jpg', caption:''}},
+            {type:'truefalse', q:'A globe is a scientific model. (true/false)', a:'true'},
+            {type:'fillblank', q:'All matter is made of tiny _____.', a:'particles'},
+            {type:'multiplechoice', q:'Which of these is a scientific model? (A) A real car (B) A toy car (C) A photograph (D) A mirror', a:'B'},
+            {type:'identification', q:'What does a water cycle drawing represent?', a:'water'},
+            {type:'truefalse', q:'Scientific models are always 100% accurate. (true/false)', a:'false'},
+            {type:'fillblank', q:'A globe is a model of the _____.', a:'earth'},
+            {type:'multiplechoice', q:'Why do scientists use models? (A) To make things harder (B) To simplify complex ideas (C) To confuse people (D) To waste time', a:'B'},
+            {type:'identification', q:'Which state of matter has particles closest together?', a:'solid'},
+            {type:'truefalse', q:'A toy car can be a scientific model. (true/false)', a:'true'}
+          ],
+          'Lesson 2 - The Particle Model': [
+            {type:'identification', q:'All matter is made of tiny _____.', a:'particles'},
+            {type:'truefalse', q:'Particles in a solid are tightly packed. (true/false)', a:'true'},
+            {type:'fillblank', q:'In a solid, particles vibrate in fixed _____.', a:'positions'},
+            {type:'multiplechoice', q:'Which state has particles far apart? (A) Solid (B) Liquid (C) Gas (D) All of them', a:'C'},
+            {type:'identification', q:'Each substance has its own unique type of _____.', a:'particles'},
+            {type:'truefalse', q:'Particles in a gas are closer than in a liquid. (true/false)', a:'false'},
+            {type:'fillblank', q:'Particles in a liquid can slide past each _____.', a:'other'},
+            {type:'multiplechoice', q:'What happens to particles when heated? (A) Slow down (B) Speed up (C) Stop moving (D) Disappear', a:'B'},
+            {type:'identification', q:'The particle model says all matter is made of tiny _____.', a:'particles'},
+            {type:'truefalse', q:'Particles are visible to the naked eye. (true/false)', a:'false'}
+          ],
+          'Summative Test - Level 1': [
+            {type:'multiplechoice', q:'What is a scientific model? (A) A real object (B) A simplified representation (C) A photograph (D) A painting', a:'B'},
+            {type:'truefalse', q:'A globe represents the Earth. (true/false)', a:'true'},
+            {type:'fillblank', q:'Matter is made of tiny _____.', a:'particles'},
+            {type:'matching', q:'Match each state with its description. Type your answer like: Solid-Tightly packed, Liquid-Close but can slide, Gas-Far apart', 
+             pairs:[
+               {left:'Solid', right:'Tightly packed, fixed positions'},
+               {left:'Liquid', right:'Close but can slide past each other'},
+               {left:'Gas', right:'Far apart, move freely'}
+             ], a:'solid-tightly packed, liquid-close but can slide, gas-far apart'},
+            {type:'identification', q:'What process is called when solid turns to liquid?', a:'melting'},
+            {type:'multiplechoice', q:'Why use a globe instead of showing real Earth? (A) Too small (B) Too large (C) Too colorful (D) Too flat', a:'B'},
+            {type:'truefalse', q:'Models can be updated when new information is found. (true/false)', a:'true'},
+            {type:'fillblank', q:'When heated, particles _____ up.', a:'speed'},
+            {type:'multiplechoice', q:'Which is NOT a scientific model? (A) Globe (B) Toy car (C) Real car (D) Water cycle diagram', a:'C'},
+            {type:'identification', q:'In a solution, what is the substance that dissolves called?', a:'solute'}
+          ]
+        },
+        chemistry_2: {
+          'Lesson 1 - Use of Models': [
+            {type:'identification', q:'Why would a scientist use a globe instead of showing the real Earth? (too large / too small)', a:'too large'},
+            {type:'truefalse', q:'A model can be wrong and still useful. (true/false)', a:'true'},
+            {type:'fillblank', q:'A toy car model is similar to a real car in basic _____.', a:'shape'},
+            {type:'multiplechoice', q:'Can scientific models be wrong? (A) No (B) Yes (C) Only sometimes (D) Never', a:'B'},
+            {type:'identification', q:'What happens to particles when heated? (speed up / slow down)', a:'speed up'},
+            {type:'truefalse', q:'All models show every detail perfectly. (true/false)', a:'false'},
+            {type:'fillblank', q:'The process when solid turns to liquid is called _____.', a:'melting'},
+            {type:'multiplechoice', q:'How is a toy car model similar to a real car? (A) Same size (B) Same basic shape (C) Same engine (D) Same price', a:'B'}
+          ]
+        },
+        
+        chemistry_3: {
+          'Lesson 1 - The Particle Model': [
+            {type:'identification', q:'Compare a globe and flat map. Which shows Earth\'s shape more accurately?', a:'globe'},
+            {type:'truefalse', q:'A model of the solar system using marbles fails to match real size ratios. (true/false)', a:'true'},
+            {type:'fillblank', q:'Can the particle model explain why substances expand when heated? (yes/no)', a:'yes'},
+            {type:'multiplechoice', q:'Which shows Earth\'s shape more accurately? (A) Flat map (B) Globe (C) Both same (D) Neither', a:'B'}
+          ]
+        },
+        physics_1: {
+          'Lesson 1 - Motion': [
+            {type:'identification', q:'What unit measures force?', a:'newton'},
+            {type:'truefalse', q:'Motion is always measured against a reference point. (true/false)', a:'true'},
+            {type:'fillblank', q:'A car travels 100km in 2 hours. Its average speed is _____ km/h.', a:'50'},
+            {type:'multiplechoice', q:'Which is a scalar quantity? (A) Velocity (B) Force (C) Speed (D) Acceleration', a:'C'}
+          ]
+        }
+      };
+      
+      const descriptorContent = {
+        chemistry_1: {
+          'use of models': {
+            title: 'Lesson 1: Use of Models',
+            modules: [
+              {type:'text', heading:'Objectives', body:'By the end of this lesson learners will be able to:<br>1. Recognize that scientists rely on models.<br>2. Identify basic examples of models.'},
+              {type:'text', heading:'Introduction', body:'Have you ever tried to explain something that is too big, too small, or too hard to see? Scientists use models to help.'},
+              {type:'text', heading:'What are Scientific Models?', body:'A scientific model is a simplified representation of complex ideas, objects, or phenomena.'},
+              {type:'text', heading:'Key Idea', body:'Models make big, small, or invisible things easier to understand.'},
+              {type:'text', heading:'Examples', body:'Globes, toy cars, water cycle diagrams, and atomic models are all scientific models.'},
+              {type:'video', heading: 'Basta Video Ito', youtubeId:'YzLNoANQ2jk'},
+              {type:'image', url:'https://i.imgur.com/FnpD99w.gif', caption:'Earth Globe'},
+              {type:'text', heading:'Summary', body:'Scientists use models to explain concepts that are hard to show directly.'},
+
+              {type:'tally', heading:'Basta Nga', formId:'A70A4D', options: {hideTitle:true, transparentBackground:true, dynamicHeight:true, height:'600'}},
+
+              {type:'mcq', question:'Which of these is not a scientific model?', options:["A globe of earth", "A water cycle diagram", "A real car", "A toy car"], correctAnswer: 2, explanation:"A real car is not a model - it is the actual object.", media:{type:'image', url:'https://i.imgur.com/lpAG8Gm.jpg', caption:''}}
+            ]
+          },
+          'the particle model': {
+            title: 'Lesson 2: The Particle Model',
+            modules: [
+              {type:'text', heading:'Objectives', body:'By the end of this lesson learners will be able to:<br>1. Recognize that all matter is composed of tiny particles.<br>2. Describe that different substances have different particles.'},
+              {type:'text', heading:'All Matter is Made of Tiny Particles', body:'Everything you can see and touch is made of matter. Matter is made of tiny particles too small to see.'},
+              {type:'text', heading:'Key Idea', body:'Each substance has its own unique type of particles.'}
+            ]
+          }
+        }
+      };
+      
+      
+      
+      let currentStep = 0;
+      let selectedTopic = null;
+      let selectedSubtopic = null;
+      let selectedMode = null;
+      let selectedProficiency = null;
+      let selectedSkill = null;
+      let selectedTestName = null;
+      
+      let quizQuestions = [];
+      let quizCurrentIndex = 0;
+      let quizScore = 0;
+      let quizAttempted = 0;
+      let quizAnswered = false;
+      let quizHistory = [];
+      
+      function show(elem){ elem.classList.remove('hidden'); elem.classList.add('fade-in'); }
+      function hide(elem){ elem.classList.add('hidden'); elem.classList.remove('fade-in'); }
+      
+      function updateBreadcrumb(){
+        let parts = [];
+        if(selectedTopic) parts.push(topics.find(t=>t.id===selectedTopic)?.title || '');
+        if(selectedSubtopic) parts.push(topics.find(t=>t.id===selectedTopic)?.subtopics.find(s=>s.id===selectedSubtopic)?.title || '');
+        if(selectedMode) parts.push(selectedMode === 'descriptor' ? 'Descriptor' : 'Skill');
+        if(selectedProficiency) parts.push(proficiencyLevels.find(p=>p.level===selectedProficiency)?.descriptor);
+        if(selectedSkill) parts.push('Level ' + selectedSkill);
+        if(selectedTestName) parts.push(selectedTestName);
+        document.getElementById('step-breadcrumb').textContent = parts.join(' / ');
+      }
+      
+      function updateUI(){
+        ['step-0','step-1','step-2','step-3a','step-3b','step-4'].forEach(id=>{
+          const el=document.getElementById(id); if(el) el.classList.add('hidden');
+        });
+        hide(document.getElementById('descriptor-panel'));
+        hide(document.getElementById('skill-panel'));
+        
+        document.getElementById('step-title').textContent = stepTitles[Math.min(currentStep, stepTitles.length-1)];
+        document.getElementById('step-indicator').textContent = `Step ${Math.min(currentStep+1,4)} of 4`;
+        updateBreadcrumb();
+        
+        const back = document.getElementById('back-button'), reset = document.getElementById('reset-button');
+        if(currentStep>0){ back.classList.remove('hidden'); reset.classList.remove('hidden'); }
+        else { back.classList.add('hidden'); reset.classList.add('hidden'); }
+        
+        if(currentStep===0){ show(document.getElementById('step-0')); }
+        if(currentStep===1){ populateSubtopics(); show(document.getElementById('step-1')); }
+        if(currentStep===2){ show(document.getElementById('step-2')); }
+        if(currentStep===3){
+          if(selectedMode==='descriptor'){ populateProficiencyLevels(); show(document.getElementById('step-3a')); }
+          else { populateSkillLevels(); show(document.getElementById('step-3b')); }
+        }
+        if(currentStep===4){
+          show(document.getElementById('step-4'));
+          if(selectedMode==='descriptor') initDescriptorMode();
+          else initSkillMode();
+        }
+      }
+      
+      function populateSubtopics(){
+        const container = document.getElementById('step-1');
+        container.innerHTML='';
+        const topic = topics.find(t=>t.id===selectedTopic);
+        if(!topic) return;
+        topic.subtopics.forEach((s)=>{
+          const div = document.createElement('div');
+          div.className='card p-4 cursor-pointer';
+          div.tabIndex = 0;
+          div.innerHTML = `<h4 class="text-lg font-semibold text-blue-100">${s.title}</h4><p class="text-sm text-gray-400 mt-1">${s.description}</p>`;
+          div.onclick = ()=>{ handleSubtopicClick(s.id); };
+          div.onkeypress = (e)=>{ if(e.key==='Enter') handleSubtopicClick(s.id); };
+          container.appendChild(div);
+        });
+        container.classList.add('stagger'); container.classList.add('show');
+      }
+      
+      function populateProficiencyLevels(){
+        const container = document.getElementById('step-3a');
+        container.innerHTML='';
+        proficiencyLevels.forEach(p=>{
+          const div = document.createElement('div');
+          div.className = 'card p-3 text-center cursor-pointer';
+          div.tabIndex = 0;
+          div.innerHTML = `<div class="text-xl font-bold text-blue-100">${p.level}</div><div class="text-sm text-gray-400">${p.descriptor}</div>`;
+          div.onclick = ()=> handleProficiencyClick(p.level);
+          div.onkeypress = (e)=>{ if(e.key==='Enter') handleProficiencyClick(p.level); };
+          container.appendChild(div);
+        });
+        container.classList.add('stagger'); container.classList.add('show');
+      }
+      
+      function populateSkillLevels(){
+        const container = document.getElementById('step-3b');
+        container.innerHTML='';
+        skillLevels.forEach(s=>{
+          const div = document.createElement('div');
+          div.className='card p-3 text-center cursor-pointer';
+          div.tabIndex=0;
+          div.innerHTML = `<div class="text-lg font-bold text-blue-100">Level ${s.level}</div><div class="text-sm text-gray-400">${s.label}</div>`;
+          div.onclick = ()=> handleSkillClick(s.level);
+          div.onkeypress = (e)=>{ if(e.key==='Enter') handleSkillClick(s.level); };
+          container.appendChild(div);
+        });
+        container.classList.add('stagger'); container.classList.add('show');
+      }
+      
+      document.getElementById('topic-science').addEventListener('click', ()=> handleTopicClick('science'));
+      document.getElementById('topic-science').addEventListener('keypress', (e)=>{ if(e.key==='Enter') handleTopicClick('science'); });
+      document.getElementById('mode-descriptor').addEventListener('click', ()=> handleModeClick('descriptor'));
+      document.getElementById('mode-descriptor').addEventListener('keypress', (e)=>{ if(e.key==='Enter') handleModeClick('descriptor'); });
+      document.getElementById('mode-skill').addEventListener('click', ()=> handleModeClick('skill'));
+      document.getElementById('mode-skill').addEventListener('keypress', (e)=>{ if(e.key==='Enter') handleModeClick('skill'); });
+      
+      function handleTopicClick(id){
+        selectedTopic = id; selectedSubtopic=null; selectedMode=null; selectedProficiency=null; selectedSkill=null; selectedTestName=null;
+        currentStep = 1; updateUI();
+      }
+      
+      function handleSubtopicClick(id){
+        selectedSubtopic = id; selectedMode=null; selectedProficiency=null; selectedSkill=null; selectedTestName=null;
+        currentStep = 2; updateUI();
+      }
+      
+      function handleModeClick(mode){
+        selectedMode = mode; selectedTestName=null;
+        currentStep = 3; updateUI();
+      }
+      
+      function handleProficiencyClick(level){
+        selectedProficiency = level; selectedTestName=null; currentStep = 4; updateUI();
+      }
+      
+      function handleSkillClick(level){
+        selectedSkill = level; selectedTestName=null; currentStep = 4; updateUI();
+      }
+      
+      function handleBack(){
+        if(currentStep === 4){ currentStep = 3; selectedTestName=null; resetQuiz(); }
+        else if(currentStep === 3){ currentStep = 2; selectedMode = null; selectedTestName=null; }
+        else if(currentStep === 2){ currentStep = 1; selectedSubtopic = null; selectedTestName=null; }
+        else if(currentStep === 1){ currentStep = 0; selectedTopic = null; selectedTestName=null; }
+        updateUI();
+      }
+      
+      function resetSelections(){
+        currentStep = 0;
+        selectedTopic=null; selectedSubtopic=null; selectedMode=null;
+        selectedProficiency=null; selectedSkill=null; selectedTestName=null;
+        resetQuiz();
+        updateUI();
+      }
+      
+      function initDescriptorMode(){
+        const panel = document.getElementById('descriptor-panel');
+        const contentDiv = document.getElementById('lesson-content');
+        const buttonsDiv = document.getElementById('module-buttons');
+        const titleEl = document.getElementById('lesson-title');
+        const subtitleEl = document.getElementById('lesson-subtitle');
+        
+        show(panel);
+        contentDiv.innerHTML = '';
+        buttonsDiv.innerHTML = '';
+        
+        const key = `${selectedSubtopic}_${selectedProficiency}`;
+        const modulesObj = descriptorContent[key]; 
+        
+        if(!modulesObj || Object.keys(modulesObj).length === 0){
+          contentDiv.innerHTML = '<p class="text-gray-400 text-center py-8">No content available for this selection yet.</p>';
+          titleEl.textContent = 'No Content';
+          subtitleEl.textContent = 'Please select another level or topic';
+          return;
+        }
+        
+        titleEl.textContent = `${selectedSubtopic.charAt(0).toUpperCase() + selectedSubtopic.slice(1)} - ${proficiencyLevels.find(p=>p.level===selectedProficiency)?.descriptor}`;
+        subtitleEl.textContent = `${Object.keys(modulesObj).length} modules available`;
+        
+        Object.keys(modulesObj).forEach((lessonKey, idx) => {
+          const mod = modulesObj[lessonKey];
+          const btn = document.createElement('button');
+          btn.className = 'btn btn-primary text-xs';
+          btn.textContent = mod.title;
+          btn.onclick = () => loadModuleByIndex(key, lessonKey);
+          buttonsDiv.appendChild(btn);
+        });
+        
+        const firstKey = Object.keys(modulesObj)[0];
+        loadModuleByIndex(key, firstKey);
+      }
+      
+      function loadModuleByIndex(key, lessonKey){
+        const moduleData = descriptorContent[key][lessonKey];
+        const contentDiv = document.getElementById('lesson-content');
+        
+        let html = `<div class="fade-in">`;
+        html += `<h2 class="text-xl font-bold text-blue-400 mb-4">${moduleData.title}</h2>`;
+        
+        moduleData.modules.forEach((mod, modIdx) => {
+          if(mod.type === 'text'){
+            html += `<div class="lesson-section">
+            <div class="lesson-heading">${mod.heading}</div>
+            <div class="lesson-body">${mod.body}</div>
+            </div>`;
+          }
+          else if(mod.type === 'image'){
+            html += `<div class="media-wrapper">
+            <img src="${mod.url}" alt="${mod.caption}" class="lesson-image" onerror="this.style.display='none'">
+            <div class="lesson-caption">${mod.caption}</div>
+            </div>`;
+          }
+          else if(mod.type==='video'){
+            html += `<div class="media-wrapper">
+            <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/${mod.youtubeId}" allowfullscreen></iframe>
+            </div>
+            <div class="lesson-caption">${mod.heading || ''}</div>
+            </div>`;
+          }
+          else if(mod.type === 'mcq'){
+            const mcqId = `mcq-${key}-${lessonKey}-${modIdx}`;
+
+            let mediaHtml = '';
+            if(mod.media){
+              if(mod.media.type === 'image'){
+                mediaHtml = `<div class="media-wrapper mb-3" style="width:100%;">
+                <img src="${mod.media.url}" alt="${mod.media.caption || ''}" style="width:100%; max-height:300px; object-fit:cover; border-radius:0.5rem; border:1px solid rgba(96,165,250,0.15);" onerror="this.style.display='none'">
+                ${mod.media.caption ? `<div class="lesson-caption">${mod.media.caption}</div>` : ''}
+                </div>`;
+              } else if(mod.media.type === 'video'){
+                mediaHtml = `<div class="media-wrapper mb-3" style="width:100%;">
+                <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/${mod.media.youtubeId}" allowfullscreen</iframe>
+                </div>
+                ${mod.media.caption ? `<div class="lesson-caption">${mod.media.caption}</div>` : ''}
+                </div>`;
+              }
+            }
+            
+            html += `<div class="lesson-section" id="${mcqId}">
+            <div class="lesson-heading">Quick Check</div>
+            <div class="lesson-body">
+            <div class="qtype-badge qtype-multiplechoice mb-2">Multiple Choice</div>
+            <div class="text-blue-100 font-medium mb-3">${mod.question}</div>
+            ${mediaHtml}
+            <div class="flex flex-col gap-2" id="${mcqId}-options">`;
+
+            mod.options.forEach((opt, optIdx) => {
+            html += `<button class="btn text-left w-full mcq-option"
+            data-mcq="${mcqId}"
+            data-index="${optIdx}"
+            data-correct="${mod.correctAnswer}"
+            data-explanation="${mod.explanation.replace(/"/g, '&quot;')}"
+            onclick="handleMcqClick(this)">
+            <span class="font-bold mr-2">${String.fromCharCode(65 + optIdx)}.</span> ${opt}
+            </button>`;
+            });
+            html += `</div>
+            <div id="${mcqId}-feedback" class="hidden mt-3"></div>
+            </div>
+            </div>`;
+          } 
+          else if(mod.type === 'tally'){
+
+            const params = new URLSearchParams();
+            if(mod.options?.hideTitle) params.append('hideTitle', '1');
+            if(mod.options?.transparentBackground) params.append('transparentBackground', '1');
+            if(mod.options?.dynamicHeight) params.append('dynamicHeight', '1');
+            if(mod.options?.alignLeft) params.append('alignLeft', '1');
+
+            const queryString = params.toString();
+            const embedUrl = `https://tally.so/embed/${mod.formId}${queryString ? '?' + queryString : ''}`;
+
+            html += `<div class="lesson-section">
+            <div class="lesson-heading">${mod.heading || 'Form'}</div>
+            <div class="media-wrapper">
+            <iframe 
+            src="${embedUrl}"
+            width="100%"
+            height="${mod.options?.height || '500'}"
+            frameborder="0"
+            marginheight="0"
+            marginwidth="0"
+            title="${mod.heading || 'Tally Form'}
+            style="border-radius:0.5rem; background:transparent;"
+            loading="lazy">
+            </iframe>
+            </div>
+            <div>`;
+          }
+            
+        });
+        
+        html += `</div>`;
+        contentDiv.innerHTML = html;
+      }
+
+      function handleMcqClick(btn) {
+        const mcqId = btn.dataset.mcq;
+        const selectedIndex = parseInt(btn.dataset.index);
+        const correctIndex = parseInt(btn.dataset.correct);
+        const explanation = btn.dataset.explanation;
+        const isCorrect = selectedIndex === correctIndex;
+
+        const optionsContainer = document.getElementById(`${mcqId}-options`);
+        const allButtons = optionsContainer.querySelectorAll('.mcq-option');
+
+        allButtons.forEach(b => {
+          b.disabled = true;
+          b.style.cursor = 'default';
+        });
+
+        allButtons.forEach((b, idx) => {
+          if(idx === correctIndex) {
+            b.style.borderColor = '#059669';
+            b.style.background = 'rgba(5, 150, 105, 0.15)';
+          } else if (idx === selectedIndex && !isCorrect) {
+            b.style.borderColor = '#dc2626';
+            b.style.background = 'rgba(220, 38, 38, 0.15)';
+          } else {
+            b.style.opacity = '0.6';
+          }
+        });
+
+        const feedbackDiv = document.getElementById(`${mcqId}-feedback`);
+        feedbackDiv.classList.remove('hidden');
+
+        if (isCorrect) {
+          feedbackDiv.innerHTML = `
+          <div class="p-3 rounded-lg bg-green-900/20 border border-green-500/30 fade-in">
+          <div class="flex items-center gap-2 text-green-400 font-bold mb-1">
+          <span>✅</span>Correct!
+          </div>
+          <div class="text-white-300 text-sm">${explanation}</div>
+          </div>`;
+        } else {
+          const correctText = allButtons[correctIndex].textContent.trim();
+          feedbackDiv.innerHTML = `
+          <div class="p-3 rounded-lg bg-red-900/20 border border-red-500/30 fade-in">
+          <div class="flex items-center gap-2 text-red-400 font-bold mt-1">
+          <span>❌</span>Not Quite
+          </div>
+          <div class="text-white-300 text-sm mb-1">The correct answer is: <b>${correctText}</b></div>
+          <div class="text-white-300 text-sm">${explanation}</div>
+          </div>`;
+        }
+      }
+      
+      function initSkillMode(){
+        const panel = document.getElementById('skill-panel');
+        show(panel);
+        
+        show(document.getElementById('test-selection-area'));
+        hide(document.getElementById('chat-section'));
+        hide(document.getElementById('quiz-complete'));
+        
+        const inputWrapper = document.getElementById('chat-input-wrapper');
+        inputWrapper.classList.remove('hidden');
+        disableChatInput();
+        
+        const key = `${selectedSubtopic}_${selectedSkill}`;
+        const testData = skillQuestions[key];
+        
+        const buttonsContainer = document.getElementById('test-buttons-container');
+        buttonsContainer.innerHTML = '';
+        
+        if(!testData){
+          buttonsContainer.innerHTML = `<p class="text-gray-400">No tests available for this selection yet.</p>`;
+          return;
+        }
+        
+        Object.keys(testData).forEach(testName => {
+          const isSummative = testName.startsWith('Summative');
+          const btn = document.createElement('button');
+          btn.className = `test-btn ${isSummative ? 'test-btn-summative' : 'test-btn-lesson'}`;
+          btn.textContent = `${testName} (${testData[testName].length} Q)`;
+          btn.onclick = () => startQuiz(testName);
+          buttonsContainer.appendChild(btn);
+        });
+      }
+      
+      function startQuiz(testName){
+        selectedTestName = testName;
+        updateBreadcrumb();
+        
+        const key = `${selectedSubtopic}_${selectedSkill}`;
+        const testData = skillQuestions[key];
+        quizQuestions = [...(testData[testName] || [])];
+        
+        if(quizQuestions.length === 0){
+          alert('No questions available for this test.');
+          return;
+        }
+        
+        hide(document.getElementById('test-selection-area'));
+        show(document.getElementById('chat-section'));
+        hide(document.getElementById('quiz-complete'));
+        
+        quizCurrentIndex = 0;
+        quizScore = 0;
+        quizAttempted = 0;
+        quizAnswered = false;
+        quizHistory = [];
+        
+        document.getElementById('chat-area').innerHTML = '';
+        
+        enableChatInput();
+        
+        addTypingIndicator();
+        setTimeout(() => {
+          removeTypingIndicator();
+          addChatMessage('bot', `Welcome to ${testName}! 🎯\n\nThis test has ${quizQuestions.length} questions. Type your answers in the chat box below.\n\nFor multiple choice, type the letter (A, B, C, or D).\nFor true/false, type "true" or "false".\nFor matching, type pairs like "Solid-Tightly packed, Liquid-Close but can slide".\nLet's begin!`);
+          setTimeout(() => {
+            addTypingIndicator();
+            setTimeout(() => {
+              removeTypingIndicator();
+              askCurrentQuestion();
+            }, 600);
+          }, 400);
+        }, 800);
+        
+        updateQuizProgress();
+      }
+      
+      function backToTestSelection(){
+        selectedTestName = null;
+        resetQuiz();
+        initSkillMode();
+        updateBreadcrumb();
+      }
+      
+      function askCurrentQuestion(){
+        if(quizCurrentIndex >= quizQuestions.length){
+          showQuizComplete();
+          return;
+        }
+        const q = quizQuestions[quizCurrentIndex];
+        const qNum = quizCurrentIndex + 1;
+
+        let mediaHtml = '';
+            if(q.media){
+              if(q.media.type === 'image'){
+                mediaHtml = `<div class="media-wrapper mt-3" style="width:100%;">
+                <img src="${q.media.url}" alt="${q.media.caption || ''}" style="width:100%; max-height:300px; object-fit:cover; border-radius:0.5rem; border:1px solid rgba(96,165,250,0.15);" onerror="this.style.display='none'">
+                ${q.media.caption ? `<div class="lesson-caption">${q.media.caption}</div>` : ''}
+                </div>`;
+              } else if(q.media.type === 'video'){
+                mediaHtml = `<div class="media-wrapper mt-3" style="width:100%;">
+                <div class="video-container">
+                <iframe src="https://www.youtube.com/embed/${q.media.youtubeId}" allowfullscreen</iframe>
+                </div>
+                ${q.media.caption ? `<div class="lesson-caption">${q.media.caption}</div>` : ''}
+                </div>`;
+              }
+            }
+        
+        let badgeClass = '';
+        let hintText = '';
+        switch(q.type){
+          case 'identification': 
+            badgeClass = 'qtype-identification'; 
+            hintText = 'Type your answer below.';
+            break;
+          case 'multiplechoice': 
+            badgeClass = 'qtype-multiplechoice'; 
+            hintText = 'Type the letter of your answer (A, B, C, or D).';
+            break;
+          case 'truefalse': 
+            badgeClass = 'qtype-truefalse'; 
+            hintText = 'Type "true" or "false".';
+            break;
+          case 'fillblank': 
+            badgeClass = 'qtype-fillblank'; 
+            hintText = 'Fill in the blank with the correct word.';
+            break;
+          case 'matching': 
+            badgeClass = 'qtype-matching'; 
+            hintText = 'Type your matches like: Left-Right, Left-Right';
+            break;
+        }
+        
+        let questionHtml = `<div class="qtype-badge ${badgeClass}">${q.type}</div><div><b>Q${qNum}:</b> ${q.q}</div>${mediaHtml}`;
+        
+        if(q.type === 'multiplechoice' && q.options){
+          questionHtml += `<div class="mt-2 text-sm text-gray-300">`;
+          q.options.forEach((opt, idx) => {
+            questionHtml += `<div>${String.fromCharCode(65+idx)}. ${opt}</div>`;
+          });
+          questionHtml += `</div>`;
+        }
+        
+        if(q.type === 'matching' && q.pairs){
+          questionHtml += `<div class="mt-2 text-sm text-gray-300"><b>Column A:</b><br>`;
+          q.pairs.forEach(p => {
+            questionHtml += `• ${p.left}<br>`;
+          });
+          questionHtml += `</div><div class="mt-1 text-sm text-gray-300"><b>Column B:</b><br>`;
+          const rightItems = [...q.pairs].map(p => p.right).sort(() => Math.random() - 0.5);
+          rightItems.forEach(r => {
+            questionHtml += `• ${r}<br>`;
+          });
+          questionHtml += `</div>`;
+        }
+        
+        questionHtml += `<div class="hint-text">💡 ${hintText}</div>`;
+        
+        addChatMessage('bot', questionHtml, true);
+        quizAnswered = false;
+        updateQuizProgress();
+        enableChatInput();
+      }
+      
+      function handleChatKeydown(event){
+        if(event.key === 'Enter' && !event.shiftKey){
+          event.preventDefault();
+          submitChatAnswer();
+        }
+      }
+      
+      function submitChatAnswer(){
+        if(quizAnswered) return;
+        
+        const ta = document.getElementById('chat-textarea');
+        const userAnswer = ta.value.trim();
+        if(!userAnswer) return;
+        
+        quizAnswered = true;
+        disableChatInput();
+        
+        ta.value = '';
+        ta.rows = 1;
+        
+        addChatMessage('user', userAnswer);
+        
+        const q = quizQuestions[quizCurrentIndex];
+        let isCorrect = false;
+        
+        switch(q.type){
+          case 'multiplechoice':
+            
+            const letterMap = {};
+            if(q.options){
+              q.options.forEach((opt, idx) => {
+                letterMap[String.fromCharCode(65+idx).toLowerCase()] = opt.toLowerCase().trim();
+                letterMap[opt.toLowerCase().trim()] = opt.toLowerCase().trim();
+              });
+            }
+            const userLower = userAnswer.toLowerCase().trim();
+            const correctLower = q.a.toLowerCase().trim();
+            
+            let userMapped = userLower;
+            if(letterMap[userLower]) userMapped = letterMap[userLower];
+
+            let correctMapped = correctLower;
+            if(letterMap[correctLower]) correctMapped = letterMap[correctLower];
+            
+            isCorrect = userMapped === correctMapped || userLower === correctLower;
+            break;
+          
+          case 'truefalse':
+            isCorrect = userAnswer.toLowerCase().trim() === q.a.toLowerCase().trim();
+            break;
+          
+          case 'matching':
+            isCorrect = checkMatchingAnswer(userAnswer, q);
+            break;
+          
+          case 'fillblank':
+          case 'identification':
+          default:
+            isCorrect = checkAnswerMatch(userAnswer.toLowerCase().trim(), q.a.toLowerCase().trim());
+            break;
+        }
+        
+        quizAttempted++;
+        if(isCorrect) quizScore++;
+        
+        quizHistory.push({
+          question: q.q,
+          userAnswer: userAnswer,
+          correctAnswer: q.a,
+          isCorrect: isCorrect,
+          type: q.type
+        });
+        
+        addTypingIndicator();
+        setTimeout(() => {
+          removeTypingIndicator();
+          if(isCorrect){
+            addChatMessage('bot', `✅ Correct! The answer is: ${q.a}`);
+          } else {
+            addChatMessage('bot', `❌ Not quite right. The correct answer is: ${q.a}`);
+          }
+          updateQuizProgress();
+          
+          if(quizCurrentIndex < quizQuestions.length - 1){
+            setTimeout(() => {
+              quizCurrentIndex++;
+              addTypingIndicator();
+              setTimeout(() => {
+                removeTypingIndicator();
+                askCurrentQuestion();
+              }, 600);
+            }, 1200);
+          } else {
+            setTimeout(() => {
+              quizCurrentIndex++;
+              showQuizComplete();
+            }, 1200);
+          }
+        }, 800);
+      }
+      
+      function checkMatchingAnswer(userAnswer, q){
+        if(!q.pairs) return false;
+        
+        const userPairs = userAnswer.toLowerCase().split(',').map(s => s.trim());
+        const correctPairs = q.pairs;
+        
+        let correctCount = 0;
+        
+        userPairs.forEach(up => {
+          const parts = up.split('-').map(s => s.trim());
+          if(parts.length === 2){
+            const left = parts[0];
+            const right = parts[1];
+            
+            const correctPair = correctPairs.find(cp => 
+              cp.left.toLowerCase().includes(left) || left.includes(cp.left.toLowerCase())
+                                                 );
+            
+            if(correctPair){
+              
+              if(correctPair.right.toLowerCase().includes(right) || right.includes(correctPair.right.toLowerCase())){
+                correctCount++;
+              }
+            }
+          }
+        });
+        
+        return correctCount / correctPairs.length >= 0.6;
+      }
+      
+      function checkAnswerMatch(user, correct){
+        if(user === correct) return true;
+        if(correct.length > 10 && (user.includes(correct) || correct.includes(user))) return true;
+        if(user.length > 10 && (correct.includes(user) || user.includes(correct))) return true;
+        const userWords = user.split(/\s+/).filter(w => w.length > 2);
+        const correctWords = correct.split(/\s+/).filter(w => w.length > 2);
+        if(userWords.length > 0 && correctWords.length > 0){
+          const matches = userWords.filter(w => correctWords.includes(w)).length;
+          if(matches / correctWords.length >= 0.6) return true;
+        }
+        const userNum = user.match(/[\d.]+/);
+        const correctNum = correct.match(/[\d.]+/);
+        if(userNum && correctNum && userNum[0] === correctNum[0]) return true;
+        return false;
+      }
+      
+      function addChatMessage(sender, text){
+        const area = document.getElementById('chat-area');
+        if(!area) return;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = `message-wrapper ${sender === 'user' ? 'user-wrapper' : ''}`;
+
+        const avatar = document.createElement('div');
+        avatar.className = `message-avatar ${sender === 'bot' ? 'bot-avatar' : 'user-avatar'}`;
+        avatar.textContent = sender === 'bot' ? 'AI' : 'YOU';
+
+        const bubble = document.createElement('div');
+        bubble.className = `message-bubble ${sender === 'bot' ? 'bot-message' : 'user-message'}`;
+        bubble.innerHTML = text.replace(/\n/g, '<br>');
+
+        if(sender === 'user') {
+          wrapper.appendChild(bubble);
+          wrapper.appendChild(avatar);
+        } else {
+          wrapper.appendChild(avatar);
+          wrapper.appendChild(bubble);
+        }
+
+        area.appendChild(wrapper);
+        area.scrollTop = area.scrollHeight;     
+      }
+      
+      function escapeHtml(text){
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+      
+      function addTypingIndicator(){
+        const chat = document.getElementById('chat-area');
+        const div = document.createElement('div');
+        div.id = 'typing-indicator';
+        div.className = 'message-wrapper fade-in';
+        div.innerHTML = `<div class="message-avatar bot-avatar">Bot</div><div class="message-bubble bot-message"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+        chat.appendChild(div);
+        chat.scrollTop = chat.scrollHeight;
+      }
+      
+      function removeTypingIndicator(){
+        const el = document.getElementById('typing-indicator');
+        if(el) el.remove();
+      }
+      
+      function enableChatInput(){
+        const ta = document.getElementById('chat-textarea');
+        const btn = document.getElementById('chat-send-btn');
+        ta.disabled = false;
+        btn.disabled = false;
+        ta.placeholder = "Type your answer here...";
+        ta.focus();
+      }
+      
+      function disableChatInput(){
+        const ta = document.getElementById('chat-textarea');
+        const btn = document.getElementById('chat-send-btn');
+        ta.disabled = true;
+        btn.disabled = true;
+        ta.placeholder = "Select a test to begin...";
+      }
+      
+      function updateQuizProgress(){
+        const total = quizQuestions.length;
+        document.getElementById('total-q-num').textContent = total;
+        document.getElementById('current-q-num').textContent = Math.min(quizCurrentIndex + 1, total);
+        document.getElementById('score-display').textContent = quizScore;
+        document.getElementById('total-attempted').textContent = quizAttempted;
+        
+        const progressDiv = document.getElementById('quiz-progress');
+        progressDiv.innerHTML = '';
+        for(let i=0; i<total; i++){
+          const dot = document.createElement('div');
+          dot.className = 'quiz-dot';
+          if(i < quizCurrentIndex) dot.classList.add(quizHistory[i] && quizHistory[i].isCorrect ? 'answered' : 'wrong');
+          if(i === quizCurrentIndex) dot.classList.add('active');
+          progressDiv.appendChild(dot);
+        }
+      }
+      
+      function showQuizComplete(){
+        hide(document.getElementById('chat-section'));
+        show(document.getElementById('quiz-complete'));
+        document.getElementById('final-score').textContent = quizScore;
+        document.getElementById('final-total').textContent = quizQuestions.length;
+        
+        const reviewList = document.getElementById('review-list');
+        let html = '';
+        quizHistory.forEach((h, idx) => {
+          const status = h.isCorrect ? '✅ Correct' : '❌ Wrong';
+          const cardClass = h.isCorrect ? 'review-correct' : 'review-wrong';
+          const typeLabel = h.type ? `[${h.type.toUpperCase()}] ` : '';
+          html += `<div class="review-card ${cardClass}">
+          <div class="text-xs text-gray-400 mb-1">Question ${idx+1} ${typeLabel}</div>
+          <div class="text-sm text-blue-100 mb-1">${h.question}</div>
+          <div class="text-sm ${h.isCorrect ? 'text-green-400' : 'text-red-400'}"><b>Your answer:</b> ${h.userAnswer}</div>
+          ${!h.isCorrect ? `<div class="text-sm text-green-400"><b>Correct answer:</b> ${h.correctAnswer}</div>` : ''}
+          <div class="text-xs ${h.isCorrect ? 'text-green-400' : 'text-red-400'} mt-1 font-bold">${status}</div>
+          </div>`;
+        });
+        reviewList.innerHTML = html;
+        
+        disableChatInput();
+      }
+      
+      function restartQuiz(){
+        quizCurrentIndex = 0;
+        quizScore = 0;
+        quizAttempted = 0;
+        quizHistory = [];
+        
+        hide(document.getElementById('quiz-complete'));
+        show(document.getElementById('chat-section'));
+        document.getElementById('chat-area').innerHTML = '';
+        
+        enableChatInput();
+        
+        addTypingIndicator();
+        setTimeout(() => {
+          removeTypingIndicator();
+          addChatMessage('bot', `Welcome back! Let's try again. 🎯`);
+          setTimeout(() => {
+            addTypingIndicator();
+            setTimeout(() => {
+              removeTypingIndicator();
+              askCurrentQuestion();
+            }, 600);
+          }, 400);
+        }, 800);
+      }
+      
+      function resetQuiz(){
+        quizQuestions = [];
+        quizCurrentIndex = 0;
+        quizScore = 0;
+        quizAttempted = 0;
+        quizAnswered = false;
+        quizHistory = [];
+      }
+      
+      function goHome(){ showHomeModal(); }
+      function showAbout(){ showAboutModal(); }
+      function showLab(){ showLabModal(); }
+      function showSettings(){ showSettingsModal(); }
+
+      function openModal(htmlContent) {
+        const overlay = document.getElementById('modal-overlay');
+        const body = document.getElementById('modal-body');
+        body.innerHTML = htmlContent;
+        overlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        const overlay = document.getElementById('modal-overlay');
+        overlay.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+
+      document.getElementById('modal-overlay').addEventListener('click', function(e) {
+        if(e.target === this) closeModal();
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if(e.key === 'Escape') closeModal();
+      });
+
+      function showHomeModal() {
+        const html = `
+        <div class="modal-title">Welcome to APP 2026</div>
+        <div class="modal-section">
+        <h4>About APP 2026</h4>
+        <p>APP 2026 is a structured science learning platfrom designed to help students.</p>
+        </div>
+        <div class="modal-section">
+        <h4>Our Misson</h4>
+        <p>To make science education accessible, engaging and effective.</p>
+        </div>
+        <div class="modal-section">
+        <h4>Key Features</h4>
+        <p>Descriptor Mode, Skill Mode, Questions, and Review Systems</p>
+        </div>
+        <div class="modal-section">
+        <h4>How to Use?</h4>
+        <p>Just open it.</p>
+        </div>
+        <div class = "flex gap-3 mt-4">
+        </div>
+        `;
+        openModal(html);
+      }
+
+      function showAboutModal(){
+        const html = `
+        <div class="modal-title">About the Creator</div>
+        <div class="modal-section">
+        <h4>Developer</h4>
+        <p>APP 2026 was created by Ky Rus.</p>
+        </div>
+        <div class="modal-section">
+        <h4>Contact Information</h4>
+        <p>Email: rusky@gmail.com</p>
+        </div>
+        <div class="modal-section">
+        <h4>Version</h4>
+        <p>APP 2026 v1.0.0<br>Last updated: June 2026</p>
+        </div>
+        <div class="modal-section">
+        <h4>Feedback</h4>
+        <p>We welcome your suggestions! Reach out via email.
+        </div>
+        <div class="flex gap-3 mt-4">
+        </div>
+        `;
+        openModal(html);
+      }
+
+      function showLabModal() {
+        const html = `
+        <div class="modal-title">Laboratory</div>
+        <div class="modal-section">
+        <h4>Interactive Simulations</h4>
+        <p>Explore science concpts through these interactive simulations.</p>
+        </div>
+        <div class="lab-grid">
+        <a href="https://phet.colorado.edu/sims/html/build-an-atom/latest/build-an-atom_all.html" target="_blank" class="lab-btn">
+        <span class="icon">⚛️</span>
+        <span class="label">Build an Atom</span>
+        </a>
+        <a href="https://phet.colorado.edu/sims/html/states-of-matter/latest/states-of-matter_en.html" target="_blank" class="lab-btn">
+        <span class="icon">🧊</span>
+        <span class="label">States of Matter</span>
+        </a>
+        <a href="https://phet.colorado.edu/sims/html/forces-and-motion-basics/latest/forces-and-motion-basics_en.html" target="_blank" class="lab-btn">
+        <span class="icon">🚗</span>
+        <span class="label">Forces and Motion</span>
+        </a>
+        <a href="https://phet.colorado.edu/sims/html/circuit-construction-kit-dc/latest/circuit-construction-kit-dc_all.html" target="_blank" class="lab-btn">
+        <span class="icon">⚡</span>
+        <span class="label">Circuits</span>
+        </a>
+        <a href="https://phet.colorado.edu/sims/html/wave-on-a-string/latest/wave-on-a-string_all.html" target="_blank" class="lab-btn">
+        <span class="icon">🌊</span>
+        <span class="label">Waves on Strings</span>
+        </a>
+        <a href="https://phet.colorado.edu/sims/html/balancing-chemical-equations/latest/balancing-chemical-equations_en.html" target="_blank" class="lab-btn">
+        <span class="icon">⌬</span>
+        <span class="label">Balancing Equations</span>
+        </a>
+        <div class="modal-section mt-4">
+        <p style="font-size:0.8rem; color:var(--muted);">Powered by PhEt Interactive Simulations</p>
+        </div>
+        `;
+        openModal(html);
+      }
+
+      let currentTheme = 'dark';
+      let currentFontSize = 'medium';
+      let currentCategory = 'default';
+      let currentImageCategory = 'none';
+
+      function showSettingsModal() {
+        const html = `
+        <div class="modal-title">Settings</div>
+        <div class="modal-section">
+        <div class="setting-row">
+        <span class="setting-label">Dark</span>
+        <div class="toggle-switch ${currentTheme === 'dark' ? 'active' : ''}" onclick="toggleTheme()" id="theme-toggle"></div>
+        </div>
+        </div>
+        <div class="modal-section">
+        <h4>Theme Category</h4>
+        <div class="theme-grid">
+        <div class="theme-btn ${currentCategory === 'default' ? 'selected' : ''}" style="background:linear-gradient(135deg, #0b1220, #1e3a8a); color:#e6f0ff;" onclick="setCategory('default')">Default</div>
+        <div class="theme-btn ${currentCategory === 'ocean' ? 'selected' : ''}" style="background:linear-gradient(135deg, #0c1a2d, #0e7490); color:#cffafe;" onclick="setCategory('ocean')">Ocean</div>
+        <div class="theme-btn ${currentCategory === 'forest' ? 'selected' : ''}" style="background:linear-gradient(135deg, #052e16, #166534); color:#dcfce7;" onclick="setCategory('forest')">Forest</div>
+        <div class="theme-btn ${currentCategory === 'sunset' ? 'selected' : ''}" style="background:linear-gradient(135deg, #2a0a0a, #9a3412); color:#ffedd5;" onclick="setCategory('sunset')">Sunset</div>
+        <div class="theme-btn ${currentCategory === 'galaxy' ? 'selected' : ''}" style="background:linear-gradient(135deg, #1a0a2e, #6b21a8); color:#f3e8ff;" onclick="setCategory('galaxy')">Galaxy</div>
+        <div class="theme-btn ${currentCategory === 'minimal' ? 'selected' : ''}" style="background:linear-gradient(135deg, #18181b, #3f3f46); color:#fafafa;" onclick="setCategory('minimal')">Minimal</div>
+        </div>
+        </div>
+        <div class="modal-section">
+        <h4>Background Image</h4>
+        <div class="theme-grid">
+        <div class="theme-btn ${currentImageCategory === 'none' ? 'selected' : ''}" style="background:linear-gradient(135deg, #1a1a2e, #16213e); color:#e6f0ff;" onclick="setImageCategory('none')">None</div>
+        <div class="theme-btn ${currentImageCategory === 'abstract' ? 'selected' : ''}" style="background:url('https://i.imgur.com/nMyBNxT.jpg?w=200&h=100&fit=crop') center/cover; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.8);" onclick="setImageCategory('abstract')">Abstract</div>
+        <div class="theme-btn ${currentImageCategory === 'nature' ? 'selected' : ''}" style="background:url('https://i.imgur.com/E6THB4b.gif?w=200&h=100&fit=crop') center/cover; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.8);" onclick="setImageCategory('nature')">Nature</div>
+        <div class="theme-btn ${currentImageCategory === 'space' ? 'selected' : ''}" style="background:url('https://i.imgur.com/4XZjm9U.gif?w=200&h=100&fit=crop') center/cover; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.8);" onclick="setImageCategory('space')">Space</div>
+        <div class="theme-btn ${currentImageCategory === 'chemistry' ? 'selected' : ''}" style="background:url('https://i.imgur.com/EKwXPsP.jpg?w=200&h=100&fit=crop') center/cover; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.8);" onclick="setImageCategory('chemistry')">Chemistry</div>
+        </div>
+        </div>
+        <div class="modal-section">
+        <h4>Font-size</h4>
+        <div class="font-size-options">
+        <button class="font-btn ${currentFontSize === 'small' ? 'selected' : ''}" onclick="setFontSize('small')">Small</button>
+        <button class="font-btn ${currentFontSize === 'medium' ? 'selected' : ''}" onclick="setFontSize('medium')">Medium</button>
+        <button class="font-btn ${currentFontSize === 'large' ? 'selected' : ''}" onclick="setFontSize('large')">Large</button>
+        </div>
+        </div>
+        <div class="flex gap-3 mt-4">
+        </div>
+        `;
+        openModal(html);
+      }
+
+      function toggleTheme() {
+        currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        const toggle = document.getElementById('theme-toggle');
+        if(toggle) toggle.classList.toggle('active');
+        applySettings();
+      }
+
+      function setCategory(cat) {
+        currentCategory = cat;
+        currentImageCategory = 'none';
+        
+        document.querySelectorAll('.theme-grid:first-of-type .theme-btn').forEach(btn => {
+          btn.classList.remove('selected');
+        });
+
+        document.querySelectorAll('.theme-grid:nth-of-type(2) .theme-btn').forEach(btn => {
+          btn.classList.remove('selected');
+        });
+
+        event.target.classList.add('selected');
+        applySettings();
+      }
+
+
+      function setImageCategory(cat) {
+        currentImageCategory = cat;
+        
+        document.querySelectorAll('.theme-grid:first-of-type .theme-btn').forEach(btn => {
+          btn.classList.remove('selected');
+        });
+
+        document.querySelectorAll('.theme-grid:nth-of-type(2) .theme-btn').forEach(btn => {
+          btn.classList.remove('selected');
+        });
+
+        event.target.classList.add('selected');
+        applySettings();
+      }
+
+      function setFontSize(size) {
+        currentFontSize = size;
+        document.querySelectorAll('.font-btn').forEach(btn => btn.classList.remove('selected'));
+        event.target.classList.add('selected');
+        applySettings();
+      }
+
+      function applySettings() {
+        const root = document.documentElement;
+        const body = document.body;
+
+        const themes = {
+          default: {primary: '#3b82f6', primaryDark: '#1e3a8a', glow: '#60a5fa', bg: '#0b1220', card: '#0f1724', text:'#e6f0ff' },
+          ocean: {primary: '#22d3ee', primaryDark: '#0891b2', glow: '#67e8f9', bg: '#083344', card: '#0e4a5e', text: '#ecfeff' },
+          forest: {primary: '#22c55e', primaryDark: '#166534', glow: '#4ade80', bg: '#052e16', card: '#0a3318', text: '#dcfce7' },
+          sunset: {primary: '#f97316', primaryDark: '#9a3412', glow: '#fb923c', bg:'#2a0a0a', card: '#3a1530', text: '#ffedd5' },
+          galaxy: {primary: '#a855f7', primaryDark: '#6b21a8', glow: '#c084fc', bg: '#1a0a2e', card: '#241038', text: '#f3e8ff' },
+          minimal: {primary: '#71717a', primaryDark: '#3f3f46', glow: '#a1a1aa', bg: '#18181b', card: '#27272a', text: '#fafafa' }
+        };
+
+        const images = {
+          none: null,
+          abstract: 'url("https://i.imgur.com/nMyBNxT.jpg")',
+          nature: 'url("https://i.imgur.com/E6THB4b.gif")',
+          space: 'url("https://i.imgur.com/4XZjm9U.gif")',
+          chemistry: 'url("https://i.imgur.com/EKwXPsP.jpg")'
+        };
+            
+
+        const t = themes[currentCategory] || themes.default;
+        root.style.setProperty('--color-primary', t.primary);
+        root.style.setProperty('--color-primary-dark', t.primaryDark);
+        root.style.setProperty('--color-glow', t.glow);
+        root.style.setProperty('--bg', t.bg);
+        root.style.setProperty('--card', t.card);
+        root.style.setProperty('--text', t.text);
+
+        if (currentImageCategory === 'none') {
+          body.classList.remove('has-image-bg');
+          root.style.setProperty('--bg', t.bg);
+          root.style.setProperty('--card', t.card);
+          body.style.backgroundImage = 'none';
+          body.style.backgroundColor = t.bg;
+
+          document.querySelectorAll('.section, .card, main').forEach(el => {
+            el.style.backdropFilter = '';
+            el.style.webkitBackdropFilter = '';
+          });
+        } else {
+          body.classList.add('has-image-bg');
+          const img = images[currentImageCategory];
+          body.style.backgroundImage = img;
+          body.style.backgroundSize = 'cover';
+          body.style.backgroundPosition = 'center';
+          body.style.backgroundAttachment = 'fixed';
+
+          root.style.setProperty('--bg', t.bg);
+          root.style.setProperty('--card', t.card);
+
+          if (currentTheme === 'dark') {   
+            
+            root.style.setProperty('--bg', 'transparent');
+          
+            document.querySelectorAll('.section, .card, main').forEach(el => {
+              el.style.backdropFilter = 'blur(12px) saturate(160%)';
+              el.style.webkitBackdropFilter = 'blur(12px) saturate(160%)';
+            });
+          } else {
+            root.style.setProperty('--card', 'rgba(255, 255, 255, 0.75)');
+            root.style.setProperty('--bg', 'transparent');
+
+            document.querySelectorAll('.section, .card, main').forEach(el => {
+              el.style.backdropFilter = 'blur(8px)';
+              el.style.webkitBackdropFilter = 'blur(8px)';
+            });
+          }
+        }
+
+        if(currentTheme === 'light') {
+         document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+
+        const sizes = {small: '20px', medium: '24px', large: '28px' };
+        const size = sizes[currentFontSize] || '24px';
+
+        document.documentElement.style.fontSize = size;
+        document.body.style.fontSize = size;
+
+        closeModal();
+      }
+        
+        
+      const sessionTimeIn = new Date();
+      
+      function updateTimer(){
+        const now = new Date();
+
+        const inHours = sessionTimeIn.getHours();
+        const inMinutes = String(sessionTimeIn.getMinutes()).padStart(2, '0');
+        const formattedTimeIn = `${inHours}:${inMinutes}`;
+
+        const currentHours = String(now.getHours()).padStart(2, '0');
+        const currentMinutes = String(now.getMinutes()).padStart(2, '0');
+        const currentSeconds = String(now.getSeconds()).padStart(2, '0');
+        const formattedCurrentTime = `${currentHours}:${currentMinutes}:${currentSeconds}`;
+
+        const timelineEl = document.getElementById('session-timeline-clock');
+        if (timelineEl) {
+          timelineEl.textContent = `${formattedTimeIn} - ${formattedCurrentTime}`;
+        }
+      }
+
+      setInterval(updateTimer, 1000);
+      updateTimer();
+      
+      
+      document.addEventListener('keydown', function(event){
+        if(event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
+        if(event.key.toLowerCase() === 'f'){
+          if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+        } else if(event.key.toLowerCase() === 'e'){
+          if(document.fullscreenElement) document.exitFullscreen();
+        }
+      });
+
+      let navMenuOpen = false;
+
+      function toggleNavMenu() {
+        const menu= document.getElementById('nav-menu');
+        const icon = document.getElementById('menu-icon');
+        
+        navMenuOpen = !navMenuOpen;
+        
+        if(navMenuOpen) {
+          menu.classList.remove('hidden');
+          menu.classList.add('fade-in');
+          icon.textContent = '✖';
+        } else {
+          menu.classList.add('hidden');
+          menu.classList.remove('fade-in');
+          icon.textContent = '☰';
+        }
+      }
+
+      
+      
+      
+    
+    </script>
+  </body>
+</html>
+    
+            
