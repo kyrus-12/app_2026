@@ -1156,9 +1156,6 @@
               {type:'mcq', question:'Which type of scientific model relies on mathematical equations and data to describe and predict how a system behaves?', options:["Physical Model", "Mathematical Model", "Conceptual Model", "Computational Model"], correctAnswer: 1, explanation:"Mathematical model uses equations and data to describe relationships and predict the behavior of a system."},
               {type:'mcq', question:'Which type of scientific model uses diagrams, illustrations, or ideas to show how a system functions or is arranged?', options:["Computational Model", "Mathematical Model", "Conceptual Model", "Physical Model"], correctAnswer: 2, explanation:"Conceptual model uses diagrams or ideas to explain how a system works or is organized."},
               {type:'mcq', question:'Which type of scientific model uses computer-based simulations to represent and analyze complex systems or processes?', options:["Conceptual Model", "Mathematical Model", "Physical Model", "Computational Model"], correctAnswer: 3, explanation:"Computational model uses computer simulations to represent and analyze complex systems or processes."},
-              
-              
-              {type:'tally', heading:'Basta Nga', formId:'A70A4D', options: {hideTitle:true, transparentBackground:true, dynamicHeight:true, height:'600'}},
             ]
           },
           'the particle model': {
@@ -1463,7 +1460,7 @@
             const embedUrl = `https://tally.so/embed/${mod.formId}${queryString ? '?' + queryString : ''}`;
 
             html += `<div class="lesson-section">
-            <div class="lesson-heading">${mod.heading || 'Form'}</div>
+            <div class="lesson-heading">${mod.heading || ''}</div>
             <div class="media-wrapper">
             <iframe 
             src="${embedUrl}"
