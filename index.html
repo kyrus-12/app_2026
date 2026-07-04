@@ -1397,7 +1397,7 @@
             if(mod.media){
               if(mod.media.type === 'image'){
                 mediaHtml = `<div class="media-wrapper mb-3" style="width:100%;">
-                <img src="${mod.media.url}" alt="${mod.media.caption || ''}" style="width:100%; max-height:300px; object-fit:cover; border-radius:0.5rem; border:1px solid rgba(96,165,250,0.15);" onerror="this.style.display='none'">
+                <img src="${mod.media.url}" alt="${mod.media.caption || ''}" style="width:100%; height:auto; object-fit:cover; border-radius:0.5rem; border:1px solid rgba(96,165,250,0.15);" onerror="this.style.display='none'">
                 ${mod.media.caption ? `<div class="lesson-caption">${mod.media.caption}</div>` : ''}
                 </div>`;
               } else if(mod.media.type === 'video'){
@@ -1614,7 +1614,7 @@
             if(q.media){
               if(q.media.type === 'image'){
                 mediaHtml = `<div class="media-wrapper mt-3" style="width:100%;">
-                <img src="${q.media.url}" alt="${q.media.caption || ''}" style="width:100%; max-height:300px; object-fit:cover; border-radius:0.5rem; border:1px solid rgba(96,165,250,0.15);" onerror="this.style.display='none'">
+                <img src="${q.media.url}" alt="${q.media.caption || ''}" style="width:100%; height:auto; object-fit:cover; border-radius:0.5rem; border:1px solid rgba(96,165,250,0.15);" onerror="this.style.display='none'">
                 ${q.media.caption ? `<div class="lesson-caption">${q.media.caption}</div>` : ''}
                 </div>`;
               } else if(q.media.type === 'video'){
