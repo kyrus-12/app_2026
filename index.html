@@ -1534,7 +1534,7 @@
           feedbackDiv.innerHTML = `
           <div class="p-3 rounded-lg bg-red-900/20 border border-red-500/30 fade-in">
           <div class="flex items-center gap-2 text-red-400 font-bold mt-1">
-          <span>❌</span>Not Quite
+          <span>❌</span>Incorrect.
           </div>
           <div class="text-white-300 text-sm mb-1">The correct answer is: <b>${correctText}</b></div>
           <div class="text-white-300 text-sm">${explanation}</div>
@@ -1784,9 +1784,11 @@
         setTimeout(() => {
           removeTypingIndicator();
           if(isCorrect){
-            addChatMessage('bot', `✅ Correct! The answer is: ${q.a}`);
+            const exp = q.explanation ?`\n\n 🧠 ${q.explanation}` : '';
+            addChatMessage('bot', `✅ Correct! The answer is: ${q.a}${exp}`);
           } else {
-            addChatMessage('bot', `❌ Not quite right. The correct answer is: ${q.a}`);
+            const exp = q.explanation ?`\n\n 🧠 ${q.explanation}` : '';
+            addChatMessage('bot', `❌ Incorrect. The correct answer is: ${q.a}${exp}`);
           }
           updateQuizProgress();
           
