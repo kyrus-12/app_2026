@@ -1464,7 +1464,7 @@
             ${mediaHtml}
             <div class="flex flex-col gap-2" id="${mcqId}-options">`;
 
-            mod.options.forEach((opt, optIdx) => {
+            shuffledOptions.forEach((opt, optIdx) => {
             html += `<button class="btn text-left w-full mcq-option"
             data-mcq="${mcqId}"
             data-index="${optIdx}"
