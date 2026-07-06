@@ -1449,7 +1449,7 @@
                 text:opt,
                 originalIndex: idx
               }));
-              const shuffled = shuffledArray(optionsWithIndex);
+              const shuffled = shuffleArray(optionsWithIndex);
               shuffledOptions = shuffled.map(o => o.text);
               newCorrectIndex = shuffled.findIndex(o => o.originalIndex === mod.correctAnswer);
             } else {
