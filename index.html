@@ -1445,7 +1445,7 @@
             let newCorrectIndex = mod.correctAnswer;
 
             if(mod.options && mod.options.length > 1){
-              const optionsWithIndex = mod.options.map(opt, idx) => ({
+              const optionsWithIndex = mod.options.map((opt, idx) => ({
                 text:opt,
                 originalIndex: idx
               }));
@@ -1468,7 +1468,7 @@
             html += `<button class="btn text-left w-full mcq-option"
             data-mcq="${mcqId}"
             data-index="${optIdx}"
-            data-correct="${mod.correctAnswer}"
+            data-correct="${newCorrectIndex}"
             data-explanation="${mod.explanation.replace(/"/g, '&quot;')}"
             onclick="handleMcqClick(this)">
             <span class="font-bold mr-2">${String.fromCharCode(65 + optIdx)}.</span> ${opt}
