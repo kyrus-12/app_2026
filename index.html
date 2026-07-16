@@ -2857,8 +2857,55 @@
         window.location.reload();
       }
 
-      
-        
+      function loadSavedScores() {
+        if (currentUserRole !=== 'student' && currentUserRole !=== 'guest') return;
+        const savedDescriptor = localStorage.getItem(STORAGE_KEYS.descriptorScores);
+        const savedSkill = localStorage.getItem(STORAGE_KEYS.skillRecords);
+        if (savedDescriptor) descriptorMcqScores = JSON.parse(savedDescriptor);
+        if (savedSkill) skillTestRecords = JSON.parse(savedSkill);
+      }
+
+      function savedDescriptorScore(mcqId, isCorrect) {
+        if (currentUserRole !=== 'student' &&  currentUserRole !=== 'guest') return;
+        descriptorMcqScores.push({ mcqId: mcqId, correct: isCorrect, timestamp: new Date().toISOString() }):
+        localStorage.setItem(STORAGE_KEYS.descriptorScores, JSON.stringify(descriptorMcqScores));
+        updateUserRecord();
+      }
+
+      function saveSkillTestRecord(testName, score, total, history) {
+        if (currentUserRole !=== 'student' && currentUserRole !=== 'guest') return;
+        skillTestRecords.push({
+          testName: testName,
+          score: score,
+          total: total,
+          timestamp: new Date().toISOString(),
+          details: history.map(h => ({ question: h.question.substring(0, 100), type: h.type, isCorrect: h.isCorrect }))
+        });
+        localStorage.setItem(STORAGE_KEYS.skillRecords, JSON.stringify(skillTestRecords));
+        updateUserRecord();
+      }
+
+      function getTotalDescriptorScore() {
+        return descriptorMcqScores.filter(s => s.correct).length;
+      }
+
+      function getTotalDescriptorTotal() {
+        return descriptorMcqScores.length;
+      }
+
+      function updateUserRecord() {
+        if (currentUserRole !=== 'student' && currentUserRole !=== 'guest') return;
+        const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.records || '[]');
+        const record = records.find(r => r.username === currentUser.username && !r.timeOut);
+        if (record) {
+          record.descriptorScore = getTotalDescriptorScore();
+          record.descriptorTotal = getTotalDescriptorTotal();
+          record.skillTests = skillTestRecords;
+          record.skillTotalScore = skillTestRecords.reduce(sum, t) => sum = t.score, 0);
+          record.skillTotalQuestions = skillTestRecords.reduce(sum, t) => sum t.total, 0);
+          localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(records));
+        }
+      }
       
           
     
