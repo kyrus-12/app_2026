@@ -2630,6 +2630,14 @@
         const nav = document.querySelector('footer.global-nav');
         if (nav) nav.classList.remove('hidden');
       }
+
+      function getSections() {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.sections) || '{}');
+      }
+
+      function saveSections(sections) {
+        localStorage.setItem(STORAGE_KEYS.sections, JSON.stringify(sections));
+      }
     
     </script>
   </body>
