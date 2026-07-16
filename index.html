@@ -2360,7 +2360,7 @@
 
         const roleIcon = currentUserRole === 'admin' ? '👤' : currentUserRole === 'guest' ? '🗣️' : '👩🏻‍💻';
         const roleLabel = currentUserRole === 'admin' ? 'Administrator' : currentUserRole === 'guest' ? 'Guest / Teacher' : 'Student';
-        const roleColor = currentuserRole === 'admin' ? '#fbbf24' : currentUserRole === 'guest' ? '#a78bfa' : '#60a5fa';
+        const roleColor = currentUserRole === 'admin' ? '#fbbf24' : currentUserRole === 'guest' ? '#a78bfa' : '#60a5fa';
         
         const html = `
         <div class="modal-title">Settings</div>
@@ -3055,7 +3055,8 @@
         if (!str) return '';
         return String(str).replace(/"/g, '""');
       }
-        
+
+      document.addEventListener('DOMContentLoaded', initLoginSystem);
     
     </script>
   </body>
