@@ -2638,6 +2638,120 @@
       function saveSections(sections) {
         localStorage.setItem(STORAGE_KEYS.sections, JSON.stringify(sections));
       }
+
+      function handleLogin(event) {
+        event.preventDefault();
+
+        const sections = getSections();
+        const now = new Date().toISOString();
+        let changed = false;
+        for (const [password, section] of Object.entries(sections)) {
+          if (section.expiresAT && section.expiresAt < now) {
+            delete sections[password];
+            changed = true;
+          }
+        }
+        if (changed) saveSections(sections);
+
+        const usernameInput = document.getElementById('login-username').value.trim();
+        const passwordInput = document.getElementById('login-password').value.trim();
+        const errorDiv = document.getElementById('login-error');
+        errorDiv.classList.add('hidden')
+
+        if (!usernameInput) {
+          errorDiv.textContent = 'Please enter a username.';
+          errorDiv.classList.remove('hidden');
+          return;
+        }
+
+        if (usernameInput.toLowerCase() === ADMIN_USERNAME) {
+          if (!passwordInput) {
+            errorDiv.textContent = 'Admin access requires a password.';
+            errorDiv.classList.remove('hidden');
+            return;
+          }
+          const sections = getSections();
+          if (!sections[passwordInput]) {
+            errorDiv.textContent = 'No section found with this password.';
+            errorDiv.classList.remove('hidden');
+            return;
+          }
+          currentUserRole = 'admin';
+          currentUser = {
+            username = 'admin',
+            role: 'admin',
+            adminPassword: passwordInput,
+            sectionOwner: sections[passwordInput].owner,
+            sessionStart: new Date().toISOString(),
+            timeIn: formatTime(new Date()),
+            timeOut: null
+            };
+          loginSuccess();
+          return;
+        }
+
+        if (usernameInput && passwordInput) {
+          let sections = getSections();
+
+          if (!sections[passwordInput]) {
+            sections[passwordInput] = {
+              owner: usernameInput,
+              createdAt: new Date().toISOString(),
+              expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString()
+            };
+            saveSections(sections);
+
+            currentUserRole = 'guest';
+            currentUser = {
+              username: usernameInput,
+              role: 'guest',
+              guestPassword: passwordInput,
+              isSectionOwner: true,
+              sessionStart: new Date().toISOString(),
+              timeIn: formatTime(new Date()),
+              timeOut: null
+            };
+          } else { 
+            if (sections[passwordInput].expiresAt && sections[passwordInput].expiresAt < new Date().toISOString()) {
+              delete sections[passwordInput];
+              sections[passwordInput] = {
+                owner: usernameInput,
+                createdAt: new Date().toISOString(),
+                expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString()
+              };
+              saveSections(sections);
+
+              currentUserRole = 'guest';
+              currentUser = {
+                username: usernameInput,
+                role: 'guest',
+                guestPassword: passwordInput,
+                isSectionOwner: true,
+                sessionStart: new Date().toISOString(),
+                timeIn: formatTime(new Date()),
+                timeOut: null
+              };
+            } else {
+              sections[passwordInput].expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+              saveSections(sections);
+
+              constSectionOwner = sections[passwordInput].owner;
+              currentUserRole = 'student';
+              currentUser = {
+                username: usernameInput,
+                role: 'student',
+                sectionPassword: passwordInput,
+                sectionOwner: sectionOwner,
+                sessionStart: new Date().toISOString(),
+                timeIn: formatTime(new Date()),
+                timeOut: null
+              };
+            }
+          }
+          loginSuccess();
+          return;
+        }
+      }
     
     </script>
   </body>
