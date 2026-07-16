@@ -1030,10 +1030,36 @@
 
       <div id="nav-menu" class="hidden fixed bottom-16 left-4 z-50 flex flex-col gap-2 bg-[#0f1724] p-3 rounded-xl border border-[rgba(96,165,250,0.12)] shadow-lg">
         <div class="nav-item" onclick="goHome()"><div>🏠︎</div><div>Home</div></div>
-        <div class="nav-item" onclick="showAbout()"><div>ℹ️</div><div>About</div></div>
+        <div class="nav-item" onclick="showAbout()"><div>𝒊</div><div>About</div></div>
         <div class="nav-item cursor-pointer" onclick="showLab()"><div>🧪</div><div>Lab</div></div>
         <div class="nav-item" onclick="showSettings()"><div>⛭</div><div>Settings</div></div>
       </div>
+
+    <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center" style="background:var(--bg);">
+      <div class="card p-8 w-full max-w-md mx-4 fade-in" style="background:linear-gradient(180deg, var(--card), rgba(10,14,22,0.95));">
+        <div class="text-center mb-6">
+          <div class="text-5xl mb-3">🔐</div>
+          <h1 class="text-2xl font-extrabold text-blue-100 mb-1">AIGHAM 2026</h1>
+          <p class="text-sm text-gray-400">Login to Continue</p>
+        </div>
+        <form id="login-form" onsubmit="handleLogin(event)">
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-blue-200 mb-2">Username</label>
+            <input type="text" id="login-username" class="chat-textarea w-full" placeholder="Enter username" autocomplete="username">
+          </div>
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-blue-200 mb-2">Password</label>
+            <input type="password" id="login-password" class="chat-textarea w-full" placeholder="Enter password (optional)" autocomplete="current-password">
+          </div>
+          <div id="login-error" class="hidden text-red-400 text-sm mb-3 text-center"></div>
+          <button type="submit" class="btn btn-primary w-full py-3 text-lg font-bold">Login</button>
+        </form>
+      </div>
+    </div>
+    
+    
+
+    
    
     <script>
 
