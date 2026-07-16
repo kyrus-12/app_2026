@@ -2979,7 +2979,7 @@
           <td class="p-2 text-blue-200">${record.descriptorScore || 0} <span class="text-gray-500">/ ${record.descriptorTotal || 0}</span></td>
           <td class="p-2 text-gray-300">${record.skillTests ? record.skillTests.length: 0} tests</td>
           <td class="p-2 text-blue-200">${record.skillTotalScore || 0} <span class="text-gray-500">/ ${record.skillTotalQuestions || 0}</span></td>
-          <td class="p-2"<button class="btn btn-danger text-xs py-1 px-2" onclick="deleteUserRecord('${record.username}', '${record.sessionStart}')">Delete</button></td>
+          <td class="p-2"><button class="btn btn-danger text-xs py-1 px-2" onclick="deleteUserRecord('${record.username}', '${record.sessionStart}')">Delete</button></td>
           </tr>`;
         });
         tbody.innerHTML = html;
