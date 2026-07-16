@@ -2826,7 +2826,7 @@
         document.getElementById('step-0').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
         document.getElementById('step-title').textContent = 'Admin-Dashboard';
-        document.getElementyById('step-indicator').textContent = 'Admin';
+        document.getElementById('step-indicator').textContent = 'Admin';
         document.getElementById('step-breadcrumb').textContent = 'Admin / Records';
         document.getElementById('back-button').classList.add('hidden');
         document.getElementById('reset-button').classList.add('hidden');
@@ -2897,7 +2897,7 @@
 
       function savedDescriptorScore(mcqId, isCorrect) {
         if (currentUserRole !== 'student' &&  currentUserRole !== 'guest') return;
-        descriptorMcqScores.push({ mcqId: mcqId, correct: isCorrect, timestamp: new Date().toISOString() }):
+        descriptorMcqScores.push({ mcqId: mcqId, correct: isCorrect, timestamp: new Date().toISOString() });
         localStorage.setItem(STORAGE_KEYS.descriptorScores, JSON.stringify(descriptorMcqScores));
         updateUserRecord();
       }
