@@ -2345,8 +2345,23 @@
       let currentFontSize = 'medium';
       let currentCategory = 'default';
       let currentImageCategory = 'none';
+      let settingsTimerInterval = 'none';
 
       function showSettingsModal() {
+        if (!currentUser) {
+          openModal(`<div class="modal-title">Settings</div><p class="text-gray-400">Please log in first.</p>`);
+          return;
+        }
+        const sectionTagText = currentUser.sectionOwner
+        ? `In ${currentUser.sectionOwner}'s section`
+          :currentUser.isSectionOwner
+        ? 'Section Owner'
+          :'No section';
+
+        const roleIcon = currentUserRole === 'admin' ? '👤' : currentUserRole === 'guest' ? '🗣️' : '👩🏻‍💻';
+        const roleLabel = currentUserRole === 'admin' ? 'Administrator' : currentUserRole === 'guest' ? 'Guest / Teacher' : 'Student';
+        const roleColor = currentuserRole === 'admin' ? '#fbbf24' : currentUserRole === 'guest' ? '#a78bfa' : '#60a5fa';
+        
         const html = `
         <div class="modal-title">Settings</div>
         <div class="modal-section">
@@ -2384,10 +2399,25 @@
         <button class="font-btn ${currentFontSize === 'large' ? 'selected' : ''}" onclick="setFontSize('large')">Large</button>
         </div>
         </div>
+        <div class="modal-section">
+        <h4>Account</h4>
+        <div class="flex gap-3 mt-2">
+        <button class="btn btn-danger w-full" onclick="logoutUser()">Logout</button>
+        </div>
+        </div>
         <div class="flex gap-3 mt-4">
         </div>
         `;
         openModal(html);
+
+        if (sessionStartTime) {
+          const now = new Date();
+          const diff = Math.floor((now - sessionStartTime) / 1000);
+          const mins = String(Math.floor(diff / 60)).padStart(2, '0');
+          const secs = String(diff % 60).padStart(2, '0');
+          const timerEl = document.getElementById('settings-session-timer');
+          if (timerEl) timerEl.textContent = `${mins}:${secs}`;
+        }
       }
 
       function toggleTheme() {
