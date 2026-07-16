@@ -2630,8 +2630,8 @@
           try {
             currentUser = JSON.parse(savedUser);
             currentUserRole = currentUser.role;
-            sessionStartTime = new Date(curentUser.sessionStart);
-            showLoginScreen();
+            sessionStartTime = new Date(currentUser.sessionStart);
+            LoginSuccess();
           } catch (e) {
             showLoginScreen();
           } 
