@@ -2752,6 +2752,76 @@
           return;
         }
       }
+
+      function loginSuccess() {
+        sessionStartTime = new Date();
+        localStorage.setItem(STORAGE_KEYS.currentUser, JSON.stringify(currentUser));
+        if (currentUserRole === 'student' || currentUserRole === 'guest') {
+          saveUserToRecords(currentUser);
+        }
+        hideLoginScreen();
+        startSessionTimer();
+        loadSavedScores();
+
+        if (currentUserRole === 'admin') {
+          showAdminPanel();
+        }
+      }
+
+      function saveUserToRecords(user) {
+        const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.records) || '[]');
+        const existingIndex = records.findIndex(r => r.username === user.username && !r.timeOut);
+        if (existingIndex === -1) {
+          records.push({
+            username: user.username,
+            role: user.role,
+            sectionPassword: user.sectionPassword || null,
+            sectionOwner: user.sectionOwner || null,
+            guestPassword: user.guestPassword || null,
+            isSectionOwner: user.isSectionOwner || false,
+            timeIn: user.timeIn, 
+            timeOut: null,
+            sessionStart: user.sessionStart,
+            descriptorScore: 0,
+            descriptorTotal: 0,
+            skillTests: [],
+            skillTotalScore: 0,
+            skillTotalQuestions: 0
+          });
+          localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(records));
+        }
+      }
+
+      function showAdminPanel() {
+        document.getElementById('step-0').classList.add('hidden');
+        document.getElementById('admin-panel').classList.remove('hidden');
+        document.getElementById('step-title').textContent = 'Admin-Dashboard';
+        document.getElementyById('step-indicator').textContent = 'Admin';
+        document.getElementById('step-breadcrumb').textContent = 'Admin / Records';
+        document.getElementById('back-button').classList.add('hidden');
+        document.getElementById('reset-button').classList.add('hidden');
+        renderAdminRecords();
+      }
+
+      function startSessionTimer() {
+        if (sessionTimerInterval) clearInterval(sessionTimerInterval);
+        sessionTimerInterval = setInterval(() => {
+          if (!sessionStartTime) return;
+          const now = new Date();
+          const diff = Math.floor((now - sessionStartTime) / 1000); 
+          const mins = String(Math.floor(diff / 60).padStart(2, '0');
+          const secs = String(diff % 60).padStart(2, '0');
+          const timerEl = document.getElementById('user-session-timer');
+          if (timerEl) timerEl.textContent = `Session: ${mins}:${secs}`;
+        }, 1000);
+      } 
+
+      function formatTime(date) {
+        return date.toLocaleTimeString('en-US', {hour12: false, hour:'2-digit', minute:'2-digit', second:'2-digit'});
+      }
+
+      
+          
     
     </script>
   </body>
