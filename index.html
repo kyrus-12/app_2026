@@ -2959,7 +2959,40 @@
         renderAdminRecords();
       }
 
+      function calculateDuration(timeIn, timeOut) {
+        try {
+          const [h1, m1, s1] = timeIn.split(':').map(Number);
+          const [h2, m2, s2] = timeOut.split(':').map(Number);
+          const start = h1 * 3600 + m1 * 60 + s1;
+          const end = h2 * 3600 + m2 * 60 + s2;
+          let diff = end - start;
+          if (diff < 0) diff += 86400;
+          const h = Math.floor(diff / 3600);
+          const m = Math.floor(diff % 3600);
+          const s = diff % 60;
+          return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        } catch { return 'N/A';}
+      }
+
+      function deleteUserRecord(username, sessionStart) {
+        if (!confirm(`Delete record for "${username}"?`)) return;
+        let records = JSON.parse(localStorage.getItem(STORAGE_KEYS.records) || '[]');
+        records = records.filter(r => !(r.username === username && r.sessionStart === sessionStart));
+        localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(records));
+        renderAdminRecords();
+      }
+
+      function clearAllRecords() {
+        if (!confirm('Delete ALL records in this section? This cannot be undone!')) return;
+        let allRecords = JSON.parse(localStorage.getItem(STORAGE_KEYS.records) || '[]');
+        const adminPassword = currentUser.adminPassword;
+        allRecords = allRecords.filter(r => !(r.sectionPassword === adminPassword || r.guestPassword === adminPassword));
+        localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(allRecords));
+        renderAdminRecords();
+      }
+
       
+        
     
     </script>
   </body>
