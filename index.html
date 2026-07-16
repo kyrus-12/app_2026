@@ -2820,6 +2820,45 @@
         return date.toLocaleTimeString('en-US', {hour12: false, hour:'2-digit', minute:'2-digit', second:'2-digit'});
       }
 
+      function logoutUser() {
+        if (currentUser && (currentUserRole === 'student' || currentUseRole === 'guest'))  {
+          const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.records) || '[]');
+          const record = records.find(r => r.username === currentUser.username && !r.timeOut);
+          if (record) {
+            record.timeOut = formatTime(new Date());
+            record.sessionEnd = new Date().toISOString();
+            record.descriptorScore = getTotalDescriptorScore();
+            record.descriptorTotal = getTotalDescriptorTotal();
+            record.skillTests = skillTestRecords();
+            record.skillTotalScore = skillTestRecords.reduce((sum, t) => sum + t.score, 0);
+            record.skillTotalQuestions = skillTestRecords.reduce((sum, t) => sum + t.total, 0);
+            localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(records));
+          }
+        }
+
+        if (currentUser && currentUserRole === 'guest' && currentUser.guestPassword) {
+          const sections = getSections();
+          if (sections[currentUser.guestPassword]) {
+            delete sections[currentUser.guestPassword];
+            saveSections(sections);
+          }
+        }
+
+        if (sessionTimerInterval) clearInterval(sessionTimerInterval);
+        localStorage.removeItem(STORAGE_KEYS.currentUser);
+        localStorage.removeItem(STORAGE_KEYS.descriptorScores);
+        localStorage.removeItem(STORAGE_KEYS.skillRecords);
+        currentUser = null;
+        currentUserRole = null;
+        sessionStartTime = null;
+        descriptorMcqScores = [];
+        skillTestRecords = [];
+        document.getElementById('admin-panel').classList.add('hidden');
+        window.location.reload();
+      }
+
+      
+        
       
           
     
