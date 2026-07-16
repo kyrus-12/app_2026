@@ -2576,8 +2576,60 @@
       }
 
       
-      
-      
+      let currentUser = null;
+      let currentUserRole = null;
+      let sessionStartTime = null;
+      let sessionTimerInterval = null;
+      let descriptorMcqScores = [];
+      let skillTestsRecords = [];
+
+      const ADMIN_USERNAME = 'admin';
+
+      const STORAGE_KEYS = {
+        users:'app2026_users',
+        records:'app2026_records',
+        currentUser:'app2026_currentUser',
+        descriptorScores:'app2026_descriptorScores',
+        skillRecords:'app2026_skillRecords',
+        sections:'app2026_sections'
+      };
+
+      function initLoginSystem() {
+        const savedUser = local.storage.getItem(STORAGE_KEYS.currentUser);
+        if(savedUser) {
+          try {
+            currentUser = JSON.parse(savedUser);
+            currentUserRole = currentUser.role;
+            sessionStartTime = new Date(curentUSer.sessionStart);
+            showLoginScreen();
+          } catch (e) {
+            showLoginScreen();
+          } 
+        } else {
+          showLoginScreen();
+        }
+      }
+
+      function showLoginScreen() {
+        const ls = document.getElementById('login-screen');
+        ls.classList.remove('hidden');
+        ls.style.display = 'flex';
+        document.getElementById('main-content').classList.add('hidden');
+        document.querySelector('header').classList.add('hidden');
+        const nav = document.querySelector('footer.global-nav');
+        if (nav) nav.classList.add('hidden');
+        document.getElementById('login-username').focus();
+      }
+
+      function hideLoginScreen() {
+        const ls = document.getElementById('login-screen');
+        ls.classList.add('hidden');
+        ls.style.display = 'none';
+        document.getElementById('main-content').classList.remove('hidden');
+        document.querySelector('header').classList.remove('hidden');
+        const nav = document.querySelector('footer.global-nav');
+        if (nav) nav.classList.remove('hidden');
+      }
     
     </script>
   </body>
