@@ -2625,12 +2625,12 @@
       };
 
       function initLoginSystem() {
-        const savedUser = local.storage.getItem(STORAGE_KEYS.currentUser);
+        const savedUser = localStorage.getItem(STORAGE_KEYS.currentUser);
         if(savedUser) {
           try {
             currentUser = JSON.parse(savedUser);
             currentUserRole = currentUser.role;
-            sessionStartTime = new Date(curentUSer.sessionStart);
+            sessionStartTime = new Date(curentUser.sessionStart);
             showLoginScreen();
           } catch (e) {
             showLoginScreen();
@@ -2676,7 +2676,7 @@
         const now = new Date().toISOString();
         let changed = false;
         for (const [password, section] of Object.entries(sections)) {
-          if (section.expiresAT && section.expiresAt < now) {
+          if (section.expiresAt && section.expiresAt < now) {
             delete sections[password];
             changed = true;
           }
@@ -2708,7 +2708,7 @@
           }
           currentUserRole = 'admin';
           currentUser = {
-            username = 'admin',
+            username: 'admin',
             role: 'admin',
             adminPassword: passwordInput,
             sectionOwner: sections[passwordInput].owner,
@@ -2765,7 +2765,7 @@
               sections[passwordInput].expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString();
               saveSections(sections);
 
-              constSectionOwner = sections[passwordInput].owner;
+              const sectionOwner = sections[passwordInput].owner;
               currentUserRole = 'student';
               currentUser = {
                 username: usernameInput,
@@ -2839,7 +2839,7 @@
           if (!sessionStartTime) return;
           const now = new Date();
           const diff = Math.floor((now - sessionStartTime) / 1000); 
-          const mins = String(Math.floor(diff / 60).padStart(2, '0');
+          const mins = String(Math.floor(diff / 60)).padStart(2, '0');
           const secs = String(diff % 60).padStart(2, '0');
           const timerEl = document.getElementById('user-session-timer');
           if (timerEl) timerEl.textContent = `Session: ${mins}:${secs}`;
@@ -2851,7 +2851,7 @@
       }
 
       function logoutUser() {
-        if (currentUser && (currentUserRole === 'student' || currentUseRole === 'guest'))  {
+        if (currentUser && (currentUserRole === 'student' || currentUserRole === 'guest'))  {
           const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.records) || '[]');
           const record = records.find(r => r.username === currentUser.username && !r.timeOut);
           if (record) {
@@ -2859,7 +2859,7 @@
             record.sessionEnd = new Date().toISOString();
             record.descriptorScore = getTotalDescriptorScore();
             record.descriptorTotal = getTotalDescriptorTotal();
-            record.skillTests = skillTestRecords();
+            record.skillTests = skillTestRecords;
             record.skillTotalScore = skillTestRecords.reduce((sum, t) => sum + t.score, 0);
             record.skillTotalQuestions = skillTestRecords.reduce((sum, t) => sum + t.total, 0);
             localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(records));
@@ -2888,7 +2888,7 @@
       }
 
       function loadSavedScores() {
-        if (currentUserRole !=== 'student' && currentUserRole !=== 'guest') return;
+        if (currentUserRole !== 'student' && currentUserRole !== 'guest') return;
         const savedDescriptor = localStorage.getItem(STORAGE_KEYS.descriptorScores);
         const savedSkill = localStorage.getItem(STORAGE_KEYS.skillRecords);
         if (savedDescriptor) descriptorMcqScores = JSON.parse(savedDescriptor);
@@ -2896,14 +2896,14 @@
       }
 
       function savedDescriptorScore(mcqId, isCorrect) {
-        if (currentUserRole !=== 'student' &&  currentUserRole !=== 'guest') return;
+        if (currentUserRole !== 'student' &&  currentUserRole !== 'guest') return;
         descriptorMcqScores.push({ mcqId: mcqId, correct: isCorrect, timestamp: new Date().toISOString() }):
         localStorage.setItem(STORAGE_KEYS.descriptorScores, JSON.stringify(descriptorMcqScores));
         updateUserRecord();
       }
 
       function saveSkillTestRecord(testName, score, total, history) {
-        if (currentUserRole !=== 'student' && currentUserRole !=== 'guest') return;
+        if (currentUserRole !== 'student' && currentUserRole !== 'guest') return;
         skillTestRecords.push({
           testName: testName,
           score: score,
@@ -2924,21 +2924,21 @@
       }
 
       function updateUserRecord() {
-        if (currentUserRole !=== 'student' && currentUserRole !=== 'guest') return;
-        const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.records || '[]');
+        if (currentUserRole !== 'student' && currentUserRole !== 'guest') return;
+        const records = JSON.parse(localStorage.getItem(STORAGE_KEYS.records) || '[]');
         const record = records.find(r => r.username === currentUser.username && !r.timeOut);
         if (record) {
           record.descriptorScore = getTotalDescriptorScore();
           record.descriptorTotal = getTotalDescriptorTotal();
           record.skillTests = skillTestRecords;
-          record.skillTotalScore = skillTestRecords.reduce(sum, t) => sum = t.score, 0);
-          record.skillTotalQuestions = skillTestRecords.reduce(sum, t) => sum t.total, 0);
+          record.skillTotalScore = skillTestRecords.reduce(sum, t) => sum + t.score, 0);
+          record.skillTotalQuestions = skillTestRecords.reduce(sum, t) => sum + t.total, 0);
           localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(records));
         }
       }
 
       function renderAdminRecords() {
-        const allRecords = JSON.parse(localStorage.getItem(STORAGE_KEYS).records) || '[]');
+        const allRecords = JSON.parse(localStorage.getItem(STORAGE_KEYS.records) || '[]');
         const tbody = document.getElementById('admin-records-body');
         const noRecords = document.getElementById('admin-no-records');
         const searchTerm = (document.getElementById('admin-search').value || '').toLowerCase();
@@ -2948,7 +2948,7 @@
         
         document.getElementById('admin-total-users').textContent = records.length;
         document.getElementById('admin-active-users').textContent = records.filter(r => !r.timeOut).length;
-        document.getElementById('admin-total-scores').textContent = records.reduce((sum, r) => sum = (r.skillTests ? r.skillTests.length: 0), 0);
+        document.getElementById('admin-total-tests').textContent = records.reduce((sum, r) => sum + (r.skillTests ? r.skillTests.length: 0), 0);
 
         let totalCombined = 0;
         records.forEach(r => { totalCombined += (r.descriptorScore || 0) + (r.skillTotalScore || 0) });
@@ -2982,7 +2982,7 @@
           <td class="p-2"<button class="btn btn-danger text-xs py-1 px-2" onclick="deleteUserRecord('${record.username}', '${record.sessionStart}')">Delete</button></td>
           </tr>`;
         });
-        tbody.innerHtml = html;
+        tbody.innerHTML = html;
       }
 
       function filterAdminRecords() {
@@ -2998,7 +2998,7 @@
           let diff = end - start;
           if (diff < 0) diff += 86400;
           const h = Math.floor(diff / 3600);
-          const m = Math.floor(diff % 3600);
+          const m = Math.floor(diff % 3600) / 60);
           const s = diff % 60;
           return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         } catch { return 'N/A';}
@@ -3032,7 +3032,7 @@
         records.forEach((record, idx) => {
           const duration = record.timeOut ? calculateDuration(record.timeIn, record.timeOut) : 'Active';
           const testsDetail = record.skillTests ? record.skillTests.map(t => `${t.testName}(${t.score}/${t.total})`).join('; ') : '';
-          csv += `${idx, + 1}, ${escapeCsv(record.username)}, ${record.role || 'student'}, ${record.timeIn || ''}, ${record.timeOut || ''}, ${duration}, ${record.descriptorScore || 0}, ${record.descriptorTotal || 0}, ${record.skillTests ? skillTests.length : 0}, ${record.skillTotalScore || 0}, ${record.skillTotalQuestions || 0}, "${escapeCsv(testsDetail)}"\n`;
+          csv += `${idx + 1}, ${escapeCsv(record.username)}, ${record.role || 'student'}, ${record.timeIn || ''}, ${record.timeOut || ''}, ${duration}, ${record.descriptorScore || 0}, ${record.descriptorTotal || 0}, ${record.skillTests ? skillTests.length : 0}, ${record.skillTotalScore || 0}, ${record.skillTotalQuestions || 0}, "${escapeCsv(testsDetail)}"\n`;
         });
 
         csv += `\n\nSUMMARY\n`;
@@ -3052,7 +3052,7 @@
         URL.revokeObjectURL(url);
       }
       function escapeCsv(str) {
-        if (!str) return'';
+        if (!str) return '';
         return String(str).replace(/"/g, '""');
       }
         
