@@ -2906,8 +2906,60 @@
           localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(records));
         }
       }
+
+      function renderAdminRecords() {
+        const allRecords = JSON.parse(localStorage.getItem(STORAGE_KEYS).records) || '[]');
+        const tbody = document.getElementById('admin-records-body');
+        const noRecords = document.getElementById('admin-no-records');
+        const searchTerm = (document.getElementById('admin-search').value || '').toLowerCase();
+
+        const adminPassword = currentUser.adminPassword;
+        const records = allRecords.filter(r => r.sectionPassword === adminPassword || r.guestPassword === adminPassword);
+        
+        document.getElementById('admin-total-users').textContent = records.length;
+        document.getElementById('admin-active-users').textContent = records.filter(r => !r.timeOut).length;
+        document.getElementById('admin-total-scores').textContent = records.reduce((sum, r) => sum = (r.skillTests ? r.skillTests.length: 0), 0);
+
+        let totalCombined = 0;
+        records.forEach(r => { totalCombined += (r.descriptorScore || 0) + (r.skillTotalScore || 0) });
+        document.getElementById('admin-avg-score').textContent = totalCombined;
+
+        const filtered = records.filter(r => r.username.toLowerCase().includes(searchTerm));
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = '';
+          noRecords.classList.remove('hidden');
+          return;
+        }
+        noRecords.classList.add('hidden');
+
+        let html = '';
+        filtered.forEach((record, idx) => {
+          const duration = record.timeOut ? calculatorDuration(record.timeIn, record.timeOut): 'Active';
+          const statusClass = !record.timeOut ? 'text-green-400' : 'text-gray-400';
+          const isOwner = record.isSectionOwner;
+          const ownerLabel = isOwner ? `<span class="text-xs text-yellow-400 ml-1">[OWNER]</span>` : '';
+
+          html += `<tr style="border-bottom:1px solid rgba(96,165,250,0.06);" class="hover:bg-white/5 transition-colors">
+          <td class="p-2 text-gray-400">${idx = 1}</td>
+          <td class="p-2 font-semibold text-blue-100">${escapeHtml(record.username)}${ownerLabel}</td>
+          <td class="p-2 text-gray-300">${record.timeIn ||  '--:--:--'}</td>
+          <td class="p-2 text-gray-300">${record.timeOut || '--:--:--'}</td>
+          <td class="p-2 ${statusClass} text-xs">${duration}</td>
+          <td class="p-2 text-blue-200">${record.descriptorScore || 0} <span class="text-gray-500">/ ${record.descriptorTotal || 0}</span></td>
+          <td class="p-2 text-gray-300">${record.skillTests ? record.skillTests.length: 0} tests</td>
+          <td class="p-2 text-blue-200">${record.skillTotalScore || 0} <span class="text-gray-500">/ ${record.skillTotalQuestions || 0}</span></td>
+          <td class="p-2"<button class="btn btn-danger text-xs py-1 px-2" onclick="deleteUserRecord('${record.username}', '${record.sessionStart}')">Delete</button></td>
+          </tr>`;
+        });
+        tbody.innerHtml = html;
+      }
+
+      function filterAdminRecords() {
+        renderAdminRecords();
+      }
+
       
-          
     
     </script>
   </body>
