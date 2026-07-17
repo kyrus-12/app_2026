@@ -2631,14 +2631,7 @@
             currentUser = JSON.parse(savedUser);
             currentUserRole = currentUser.role;
             sessionStartTime = new Date(currentUser.sessionStart);
-
-            if (currentUserRole === 'admin') {
-              window.location.href = 'admin.html';
-              return;
-            }
-            hideLoginScreen();
-            startSessionTimer();
-            loadSavedScores();
+            showLoginScreen();
           } catch (e) {
             showLoginScreen();
           } 
