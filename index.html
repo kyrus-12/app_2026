@@ -2648,8 +2648,17 @@
         document.querySelector('header').classList.add('hidden');
         const nav = document.querySelector('footer.global-nav');
         if (nav) nav.classList.add('hidden');
-        document.getElementById('login-username').focus();
+        const adminPanel = document.getElementById('admin-panel');
+    if (adminPanel) {
+        adminPanel.classList.add('hidden'); // Force admin panel to hide
+    }
+    
+    const step0 = document.getElementById('step-0');
+    if (step0) {
+        step0.classList.remove('hidden'); // Force 'Select a Topic' to show
+    }
       }
+      
 
       function hideLoginScreen() {
         const ls = document.getElementById('login-screen');
@@ -2823,13 +2832,29 @@
       }
 
       function showAdminPanel() {
-        document.getElementById('step-0').classList.add('hidden');
-        document.getElementById('admin-panel').classList.remove('hidden');
+        const step0 = document.getElementById('step-0');
+    if (step0) {
+        step0.classList.add('hidden'); 
+    }
+    
+    // Reveal the admin dashboard
+    const adminPanel = document.getElementById('admin-panel');
+    if (adminPanel) {
+        adminPanel.classList.remove('hidden'); 
+    }
         document.getElementById('step-title').textContent = 'Admin-Dashboard';
         document.getElementById('step-indicator').textContent = 'Admin';
         document.getElementById('step-breadcrumb').textContent = 'Admin / Records';
-        document.getElementById('back-button').classList.add('hidden');
-        document.getElementById('reset-button').classList.add('hidden');
+        const step0 = document.getElementById('step-0');
+    if (step0) {
+        step0.classList.add('hidden'); 
+    }
+    
+    // Reveal the admin dashboard
+    const adminPanel = document.getElementById('admin-panel');
+    if (adminPanel) {
+        adminPanel.classList.remove('hidden'); 
+    }
         renderAdminRecords();
       }
 
