@@ -2611,7 +2611,7 @@
       let sessionStartTime = null;
       let sessionTimerInterval = null;
       let descriptorMcqScores = [];
-      let skillTestsRecords = [];
+      let skillTestRecords = [];
 
       const ADMIN_USERNAME = 'admin';
 
@@ -2973,7 +2973,7 @@
           const ownerLabel = isOwner ? `<span class="text-xs text-yellow-400 ml-1">[OWNER]</span>` : '';
 
           html += `<tr style="border-bottom:1px solid rgba(96,165,250,0.06);" class="hover:bg-white/5 transition-colors">
-          <td class="p-2 text-gray-400">${idx = 1}</td>
+          <td class="p-2 text-gray-400">${idx + 1}</td>
           <td class="p-2 font-semibold text-blue-100">${escapeHtml(record.username)}${ownerLabel}</td>
           <td class="p-2 text-gray-300">${record.timeIn ||  '--:--:--'}</td>
           <td class="p-2 text-gray-300">${record.timeOut || '--:--:--'}</td>
@@ -3000,7 +3000,7 @@
           let diff = end - start;
           if (diff < 0) diff += 86400;
           const h = Math.floor(diff / 3600);
-          const m = Math.floor(diff % 3600) / 60);
+          const m = Math.floor((diff % 3600) / 60);
           const s = diff % 60;
           return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
         } catch { return 'N/A';}
@@ -3034,7 +3034,7 @@
         records.forEach((record, idx) => {
           const duration = record.timeOut ? calculateDuration(record.timeIn, record.timeOut) : 'Active';
           const testsDetail = record.skillTests ? record.skillTests.map(t => `${t.testName}(${t.score}/${t.total})`).join('; ') : '';
-          csv += `${idx + 1}, ${escapeCsv(record.username)}, ${record.role || 'student'}, ${record.timeIn || ''}, ${record.timeOut || ''}, ${duration}, ${record.descriptorScore || 0}, ${record.descriptorTotal || 0}, ${record.skillTests ? skillTests.length : 0}, ${record.skillTotalScore || 0}, ${record.skillTotalQuestions || 0}, "${escapeCsv(testsDetail)}"\n`;
+          csv += `${idx + 1}, ${escapeCsv(record.username)}, ${record.role || 'student'}, ${record.timeIn || ''}, ${record.timeOut || ''}, ${duration}, ${record.descriptorScore || 0}, ${record.descriptorTotal || 0}, ${record.skillTests ? record.skillTests.length : 0}, ${record.skillTotalScore || 0}, ${record.skillTotalQuestions || 0}, "${escapeCsv(testsDetail)}"\n`;
         });
 
         csv += `\n\nSUMMARY\n`;
@@ -3057,6 +3057,21 @@
         if (!str) return '';
         return String(str).replace(/"/g, '""');
       }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        initLoginSystem();
+      });
+        
 
       document.addEventListener('DOMContentLoaded', initLoginSystem() );
     
