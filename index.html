@@ -2631,7 +2631,13 @@
             currentUser = JSON.parse(savedUser);
             currentUserRole = currentUser.role;
             sessionStartTime = new Date(currentUser.sessionStart);
-            showLoginScreen();
+            hideLoginScreen();
+            startSessionTimer();
+            loadSavedScores();
+
+            if (currentUserRole === 'admin') {
+              showAdminPanel();
+            }
           } catch (e) {
             showLoginScreen();
           } 
@@ -2845,16 +2851,12 @@
         document.getElementById('step-title').textContent = 'Admin-Dashboard';
         document.getElementById('step-indicator').textContent = 'Admin';
         document.getElementById('step-breadcrumb').textContent = 'Admin / Records';
-        const step0 = document.getElementById('step-0');
-    if (step0) {
-        step0.classList.add('hidden'); 
-    }
+        const backBtn = document.getElementById('back-button');
+    if (backBtn) backBtn.classList.add('hidden');
     
-    // Reveal the admin dashboard
-    const adminPanel = document.getElementById('admin-panel');
-    if (adminPanel) {
-        adminPanel.classList.remove('hidden'); 
-    }
+    const resetBtn = document.getElementById('reset-button');
+    if (resetBtn) resetBtn.classList.add('hidden');
+        
         renderAdminRecords();
       }
 
