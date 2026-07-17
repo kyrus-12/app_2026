@@ -1066,7 +1066,7 @@
           <h2 class="text-xl font-bold text-blue-100">Admin Dashboard</h2>
           <p class="text-xs text-gray-400">Student Records & Performance</p>
         </div>
-      </div>
+      
       <div class="flex gap-2 flex-wrap">
         <button class="btn btn-success text-sm" onclick="downloadRecordsCSV()">Download</button>
         <button class="btn btn-danger text-sm" onclick="clearAllRecords()">Clear All</button>
@@ -1094,7 +1094,7 @@
     <div class="mb-3">
       <input type="text" id="admin-search" class="chat-textarea w-full" placeholder="Search ny username" oninput="filterAdminRecords()">
     </div>
-  </div>
+  
     <div class="card p-4">
       <h3 class="font-bold text-blue-100 mb-3">Student Records</h3>
       <div class="overflow-x-auto">
@@ -1119,6 +1119,7 @@
         <div class="text-4xl mb-2">🗃️</div>
         <p>No student records found.</p>
       </div>
+    </div>
     </div>
 
     
@@ -2364,6 +2365,17 @@
         
         const html = `
         <div class="modal-title">Settings</div>
+        <div class="modal-section" style="background:rgba(96,165,250,0.08); border-radius:0.75rem; padding:1rem;">
+        <div class="flex items-center gap-3">
+        <div class="text-2xl">${roleIcon}</div>
+        <div>
+        <div class="font-bold text-blue-100"${currentUser.username}</div>
+        <div class="text-xs" style:"color:${roleColor}">${roleLabel}</div>
+        <div class="text-xs text-yellow-400 mt-1">${sectionTagText}</div>
+        </div>
+        </div>
+        <div class="mt-2 text-gray-400">Session: <span id="settings-session-timer">00:00</span></div>
+        </div>
         <div class="modal-section">
         <div class="setting-row">
         <span class="setting-label">Dark</span>
@@ -2631,13 +2643,7 @@
             currentUser = JSON.parse(savedUser);
             currentUserRole = currentUser.role;
             sessionStartTime = new Date(currentUser.sessionStart);
-            hideLoginScreen();
-            startSessionTimer();
-            loadSavedScores();
-
-            if (currentUserRole === 'admin') {
-              showAdminPanel();
-            }
+            showLoginscreen();
           } catch (e) {
             showLoginScreen();
           } 
@@ -3084,22 +3090,7 @@
       function escapeCsv(str) {
         if (!str) return '';
         return String(str).replace(/"/g, '""');
-      }
-
-      function escapeHtml(str) {
-        if (!str) return '';
-        return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-      }
-
-      window.addEventListener('DOMContentLoaded', () => {
-        initLoginSystem();
-      });
-        
+      }    
     
     </script>
   </body>
