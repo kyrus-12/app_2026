@@ -2633,7 +2633,12 @@
             sessionStartTime = new Date(currentUser.sessionStart);
 
             if (currentUserRole === 'admin') {
-              showAdminPanel();
+              window.location.href = 'admin.html';
+              return;
+            }
+            hideLoginScreen();
+            startSessionTimer();
+            loadSavedScores();
           } catch (e) {
             showLoginScreen();
           } 
