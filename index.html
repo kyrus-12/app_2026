@@ -2624,21 +2624,27 @@
         sections:'app2026_sections'
       };
 
-      function initLoginSystem() {
-        const savedUser = localStorage.getItem(STORAGE_KEYS.currentUser);
-        if(savedUser) {
+      function initApp() {
+        const saved = localStorage.getItem(STORAGE_KEYS.currentUser);
+        if(saved) {
           try {
-            currentUser = JSON.parse(savedUser);
+            currentUser = JSON.parse(saved);
             currentUserRole = currentUser.role;
             sessionStartTime = new Date(currentUser.sessionStart);
-            showLoginScreen();
-          } catch (e) {
-            showLoginScreen();
+            hideLoginScreen();
+            if (currentUserRole === 'admin') {
+              showAdminPanel():
+            } else {
+              updateAppUI();
+            }
+            return;
+          } catch (e) {        
           } 
-        } else {
-          showLoginScreen();
-        }
+        } 
+        document.getElementById('login-screen').classList.remove('hidden');
       }
+      
+      initApp();
 
       function showLoginScreen() {
         const ls = document.getElementById('login-screen');
@@ -3055,9 +3061,7 @@
         if (!str) return '';
         return String(str).replace(/"/g, '""');
       }
-      
-      initLoginSystem();
-      updateTimer();
+    
     
     </script>
   </body>
