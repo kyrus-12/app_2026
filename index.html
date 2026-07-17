@@ -2631,7 +2631,9 @@
             currentUser = JSON.parse(savedUser);
             currentUserRole = currentUser.role;
             sessionStartTime = new Date(currentUser.sessionStart);
-            showLoginScreen();
+
+            if (currentUserRole === 'admin') {
+              showAdminPanel();
           } catch (e) {
             showLoginScreen();
           } 
@@ -2639,9 +2641,6 @@
           showLoginScreen();
         }
       }
-
-      
-      initApp();
 
       function showLoginScreen() {
         const ls = document.getElementById('login-screen');
@@ -3058,6 +3057,8 @@
         if (!str) return '';
         return String(str).replace(/"/g, '""');
       }
+
+      document.addEventListener('DOMContentLoaded', initLoginSystem() );
     
     
     </script>
