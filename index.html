@@ -2938,8 +2938,8 @@
           record.descriptorScore = getTotalDescriptorScore();
           record.descriptorTotal = getTotalDescriptorTotal();
           record.skillTests = skillTestRecords;
-          record.skillTotalScore = skillTestRecords.reduce(sum, t) => sum + t.score, 0);
-          record.skillTotalQuestions = skillTestRecords.reduce(sum, t) => sum + t.total, 0);
+          record.skillTotalScore = skillTestRecords.reduce((sum, t) => sum + t.score, 0);
+          record.skillTotalQuestions = skillTestRecords.reduce((sum, t) => sum + t.total, 0);
           localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(records));
         }
       }
@@ -2972,7 +2972,7 @@
 
         let html = '';
         filtered.forEach((record, idx) => {
-          const duration = record.timeOut ? calculatorDuration(record.timeIn, record.timeOut): 'Active';
+          const duration = record.timeOut ? calculateDuration(record.timeIn, record.timeOut): 'Active';
           const statusClass = !record.timeOut ? 'text-green-400' : 'text-gray-400';
           const isOwner = record.isSectionOwner;
           const ownerLabel = isOwner ? `<span class="text-xs text-yellow-400 ml-1">[OWNER]</span>` : '';
@@ -3046,7 +3046,7 @@
         csv += `Section Owner, ${currentUser.sectionOwner}\n`;
         csv += `Total Users, ${records.length}\n`;
         csv += `Active Users, ${records.filter(r => !r.timeOut).length}\n`;
-        csv += `Total Tests Taken, ${records.reduce((sum, r) => (r.skillTests ? r.skillTest.length : 0), 0)}\n`;
+        csv += `Total Tests Taken, ${records.reduce((sum, r) => (r.skillTest ? r.skillTest.length : 0), 0)}\n`;
 
         const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
         const url = URL.createObjectURL(blob);
