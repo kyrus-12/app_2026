@@ -2624,25 +2624,22 @@
         sections:'app2026_sections'
       };
 
-      function initApp() {
-        const saved = localStorage.getItem(STORAGE_KEYS.currentUser);
-        if(saved) {
+      function initLoginSystem() {
+        const savedUser = localStorage.getItem(STORAGE_KEYS.currentUser);
+        if(savedUser) {
           try {
-            currentUser = JSON.parse(saved);
+            currentUser = JSON.parse(savedUser);
             currentUserRole = currentUser.role;
             sessionStartTime = new Date(currentUser.sessionStart);
-            hideLoginScreen();
-            if (currentUserRole === 'admin') {
-              showAdminPanel():
-            } else {
-              updateAppUI();
-            }
-            return;
-          } catch (e) {        
+            showLoginScreen();
+          } catch (e) {
+            showLoginScreen();
           } 
-        } 
-        document.getElementById('login-screen').classList.remove('hidden');
+        } else {
+          showLoginScreen();
+        }
       }
+
       
       initApp();
 
