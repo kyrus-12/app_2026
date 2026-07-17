@@ -3055,8 +3055,9 @@
         if (!str) return '';
         return String(str).replace(/"/g, '""');
       }
-
-      document.addEventListener('DOMContentLoaded', initLoginSystem);
+      
+      initLoginSystem();
+      updateTimer();
     
     </script>
   </body>
