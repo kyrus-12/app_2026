@@ -2911,6 +2911,91 @@
         }
       });
 
+      (function(){
+        const svg = document.getElementById('circuitSvg');
+        const baseG = document.getElementById('baseLines');
+        const curG = document.getElementById('currentLines');
+        const padG = document.getElementById('pads');
+        const card = document.querySelectorAll('.login-card');
+
+        const NS = 'https://www.w3.org/2000/svg';
+        function el(tag, attrs){
+          const e = document.createElementNS(NS, tag);
+          for (const k in attrs) e.setAttribute(k, attrs[k]);
+          return e;
+        }
+
+        function buildCircuit(){
+          const w = window.innerWidth;
+          const h = window.innerHeight;
+          svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+          svg.setAttribute('width', w);
+          svg.setAttribute('height', h);
+
+          baseG.innerHTML = '';
+          curG.innerHTML = '';
+          padG.innerHTML = '';
+
+          const r = card.getBoundingClientReact();
+
+          const entries = [
+            {x: r.left, y: r.top + r.height * 0.28, side: 'left'},
+            {x: r.left, y: r.top + r.height * 0.72, side: 'left'},
+            {x: r.right, y: r.top + r.height * 0.28, side: 'right'},
+            {x: r.right, y: r.top + r.height * 0.72, side: 'right'},
+            {x: r.left + r.width * 0.3, y: r.top, side: 'top'},
+            {x: r.left + r.width * 0.7, y: r.top, side: 'top'},
+            {x: r.left + r.width * 0.3, y: r.bottom, side: 'bottom'},
+            {x: r.left + r.width * 0.7, y: r.bottom, side: 'bottom'},
+            ];
+
+          entries.forEach((entry, i) => {
+            let startX, startY, midX, midY;
+            if (entry.side === 'left'){
+              startX = 0; startY = entry.y + (i % 2 === 0 ? -80 : 80);
+              midX = entry.x - 90 - (i * 14 % 60);
+            } else if (entry.side === 'right'){
+              startX = w; startY = entry.y + (i % 2 === 0 ? 80 : -80);
+              midX = entry.x + 90 + (i * 14 % 60);
+            } else if (entry.side === 'top'){
+              startX = entry.x + (i % 2 === 0 ? -120 : 120); startY = 0;
+              midY = entry.y - 90 - (i * 10 % 50);
+            } else {
+              startX = entry.x + (i % 2 === 0 ? 120 : -120); startY = h;
+              midY = entry.y + 90 + (i * 10 % 50);
+            }
+
+            let d;
+            if (entry.side === 'left' || entry.side === 'right'){
+              d = `M ${startX},${startY} L ${midX},${startY} L ${midX},${entry.y} L ${entry.x},${entry.y}`;
+            } else {
+              d = `M ${startX},${startY} L ${startX},${midY} L ${entry.x},${midY} L ${entry.x},${entry.y}`;
+            }
+
+            baseG.appendChild(el('path', {class:'trace-base', d }));
+
+            const curve = el('path', {class: `trace-current ${i % 2 === 0 ? 'ember' : 'brass'}` , d });
+            curve.style.animationDuration = (1.6 + (i % 4) * 0.35) + 's';
+            curve.style.animationDelay = (i * 0.18) + 's';
+            curG.appendChild(curve);
+
+            const pad = el('circle', {class:'entry-pad', cx: entry.x, cy: entry.y, r: 4 });
+            pad.style.animationDelay = (i * 0.18) + 's';
+            padG.appendChild(pad);
+          });
+        }
+
+        buildCircuit();
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+          clearTimeOut(resizeTimer);
+          resizeTimer = setTimeout(buildCircuit, 120);
+        });
+      })();
+
+      
+        
+
       let navMenuOpen = false;
 
       function toggleNavMenu() {
