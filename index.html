@@ -15,6 +15,17 @@
         --card:#0f1724;
         --muted:#9ca3af;
         --text:#e6f0ff;
+        --paper:#F3E6D2;
+        --paper-deep:#E8D8B8;
+        --clay:#8A6F52;
+        --clay-dark:#5C4A37;
+        --ink:#2B211A;
+        --ink-soft:#5A4E40;
+        --ember:#C1592E;
+        --ember-deep:#9A431E;
+        --brass:#B8923F;
+        --moss:#5F6B4F;
+        --line:rgba(43,33,26,0.14);
       }
       html,body{
         height:100%;
@@ -886,6 +897,66 @@
         height:100%;
         border:none;
       }
+      #login-overlay{
+        position:fixed;
+        inset:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:2rem;
+        z-index:100;
+        background:
+          radial-gradient(circle at 15% 10%, rgba(184,146,63,0.16), transparent 45%),
+          radial-gradient(circle at 85% 90%, rgba(193,89,46,0.10), transparent 50%),
+          linear-gradient(160deg, var(--paper) 0%, var(--paper-deep) 100%);
+        overflow:hidden;
+      }
+      #login-overlay::before{
+        content:'';
+        position:absolute;
+        inset:0;
+        background-image:
+          repeating-linear-gradient(0deg, rgba(43,33,26,0.025) 0px, transparent 1px, transparent 3px),
+          repeating-linear-gradient(90deg, rgba(43,33,26,0.025) 0px, transparent 1px, transparent 3px);
+        pointer-events:none;
+      }
+      .login-card{
+        position:relative;
+        width:100%;
+        max-width:440px;
+        background:var(--paper);
+        border:1px solid var(--line);
+        border-radius:0.6rem;
+        padding:2.25rem 2.25rem 2rem;
+        box-shadow:
+          0 1px 0 rgba(255,255,255,0.5) inset,
+          0 30px 60px -20px rgba(43,33,26,0.35),
+          0 0 0 6px rgba(255,255,255,0.35);
+        animation:cardIn 0.7s cubic-beizer(0.22,1,0.36,1) both;
+      }
+      @keyframes cardIn{
+        from{ opacity:0;
+             transform:translateY(14px);}
+        to{ opacity:1;
+           transform:TranslateY(0);}
+      }
+      .login-card{
+        content:'';
+        position:absolute;
+        inset:10px;
+        border:1px dashed rgba(138,111,82,0.35);
+        border-radius:0.4rem;
+        pointer-events:none;
+      }
+      .brand-eyebrow{
+        font-family:'IBM Plex Mono', monospace;
+        font-size:0.68rem;
+        letter-spacing:0.22em;
+        text-transform:uppercase;
+        color:var(--ink-soft);
+        text-align:center;
+        margin-bottom:0.9rem;
+      }
         
         
     </style>
@@ -1034,6 +1105,60 @@
         <div class="nav-item cursor-pointer" onclick="showLab()"><div>🧪</div><div>Lab</div></div>
         <div class="nav-item" onclick="showSettings()"><div>⛭</div><div>Settings</div></div>
       </div>
+
+    <div id="login-overlay">
+      <svg id="circuitSvg" xmlns="https://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow" x="-200%" y="-200%" width="500%" height="500%">
+            <feGaussianBlur stdDeviation="3.2" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <g id="baselines"></g>
+        <g id="currentLines"></g>
+        <g id="pads"></g>
+      </svg>
+
+      <div class="login-card">
+        <div class="aigham-row" id="aigham-row"></div>
+        <div class="dial-wrap">
+          <div class="dial-readout" id="dial-readout">ADAPTIVE</div>
+          <svg class="gauge" width="180" height="90" viewBox="0 0 180 90">
+            <path class="gauge-arc" d="M 10 84 A 80 80 0 0 1 170 84"></path>
+            <g class="gauge-needle"  id="gauge-needle">
+              <line x1="90" y1="84" x2="90" y2="24"></line>
+            </g>
+            <circle class="gauge-pivot" cx="90" cy="84" r="6"></circle>
+            <circle class="gauge-pivot-hi" cx="90" cy="84" r="2.5"></circle>
+          </svg>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="login-code">Enrollment Code</label>
+          <input type="text" id="login-code" class="field-input" placeholder="">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="login-username">Position</label>
+          <select id="login-username" class="field-input">
+            <option value="student">Student</option>
+            <option value="admin">Admin</option>
+            <option value="guest">Guest</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="login-password">Password</label>
+          <input type="password" id="login-password" class="field-input" placeholder="">
+        </div>
+
+        <button class="submit-btn" onclick="handleLogin()">Sign In</button>
+        <p id="login-error" class="login-error hidden">Check your credentials, then try again.</p>
+      </div>
+    </div>
    
     <script>
 
