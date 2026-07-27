@@ -1119,14 +1119,14 @@
         pointer-events:auto;
       }
       .tag-word{
-        fons-family:'Fraunces', serif;
+        font-family:'Fraunces', serif;
         font-weight:600;
         font-size:1rem;
         color:var(--ink);
       }
       .tag-sub{
         font-family:'IBM Plex Mono', monospace;
-        font-family:0.62rem;
+        font-size:0.62rem;
         letter-spacing:0.12em;
         text-transform:uppercase;
         color:var(--ink-soft);
@@ -1165,7 +1165,7 @@
       }
       select.field-input{
         appearance:none;
-        background-image:url("data:image/svg+xml,%3Csvg xmlns='https://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235C4A37' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235C4A37' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
         background-repeat:no-repeat;
         background-position:right 0.9rem center;
         cursor:pointer;
@@ -1203,31 +1203,6 @@
       .login-error.hidden{
         display:none;
       }
-      @media (max-width:480px){
-        .login-card{
-          padding:1.6rem 1.4rem 1.6rem;
-        }
-        .letter-title{
-          width:38px;
-          height:44px;
-        }
-        .letter-tile .char{
-          font-size:1.2rem;
-        }
-        .meaning-tag{
-          width:150px;
-        }
-        @media(prefers-reduced-motion: reduce){
-          .login-card{
-            animation:none;
-          }
-          .gauge-needle{
-            transition:none;
-          }
-          .letter-tile{
-            transition:none;
-          }
-        }
         #circuitSvg{
           position:absolute;
           inset:0;
@@ -1265,7 +1240,7 @@
         .entry-pad{
           fill:var(--brass);
           filter:url(#glow);
-          animation:padPulse 2.4s ease in-out infinite;
+          animation:padPulse 2.4s ease-in-out infinite;
         }
         @keyframes padPulse{
           0%, 100%{
