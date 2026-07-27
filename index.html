@@ -943,7 +943,7 @@
         to{ opacity:1;
            transform:TranslateY(0);}
       }
-      .login-card{
+      .login-card::before{
         content:'';
         position:absolute;
         inset:10px;
@@ -1434,7 +1434,7 @@
             </feMerge>
           </filter>
         </defs>
-        <g id="baselines"></g>
+        <g id="baseLines"></g>
         <g id="currentLines"></g>
         <g id="pads"></g>
       </svg>
@@ -2919,7 +2919,7 @@
         const baseG = document.getElementById('baseLines');
         const curG = document.getElementById('currentLines');
         const padG = document.getElementById('pads');
-        const card = document.querySelectorAll('.login-card');
+        const card = document.querySelector('.login-card');
 
         const NS = 'https://www.w3.org/2000/svg';
         function el(tag, attrs){
@@ -2939,7 +2939,7 @@
           curG.innerHTML = '';
           padG.innerHTML = '';
 
-          const r = card.getBoundingClientReact();
+          const r = card.getBoundingClientRect();
 
           const entries = [
             {x: r.left, y: r.top + r.height * 0.28, side: 'left'},
@@ -2991,7 +2991,7 @@
         buildCircuit();
         let resizeTimer;
         window.addEventListener('resize', () => {
-          clearTimeOut(resizeTimer);
+          clearTimeout(resizeTimer);
           resizeTimer = setTimeout(buildCircuit, 120);
         });
       })();
