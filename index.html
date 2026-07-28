@@ -2929,20 +2929,6 @@
           return e;
         }
 
-        (function(){
-        const svg = document.getElementById('circuitSvg');
-        const baseG = document.getElementById('baseLines');
-        const curG = document.getElementById('currentLines');
-        const padG = document.getElementById('pads');
-        const card = document.querySelector('.login-card');
-
-        const NS = 'http://www.w3.org/2000/svg';
-        function el(tag, attrs){
-          const e = document.createElementNS(NS, tag);
-          for (const k in attrs) e.setAttribute(k, attrs[k]);
-          return e;
-        }
-
         function buildCircuit(){
           const w = window.innerWidth;
           const h = window.innerHeight;
@@ -3009,8 +2995,7 @@
           clearTimeout(resizeTimer);
           resizeTimer = setTimeout(buildCircuit, 120);
         });
-        })();
-      }
+      })();
         
 
       const MODULES = [
