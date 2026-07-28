@@ -3068,6 +3068,75 @@ if (!reduceMotion){
   }, 1600);
 }
 
+        const ENROLLED_CODES = {
+  'STUDENT2026': { role: 'student', password: 'student' },
+  'KYRUS2026': { role: 'student', password: 'kyky@1122' },
+  'ADMIN2026':   { role: 'admin',   password: 'admin' },
+  'GUEST2026':   { role: 'guest',   password: 'guest' }
+};
+
+let currentUser = null;
+let questionStartTime = null;
+
+function handleLogin() {
+  const code = document.getElementById('login-code').value.trim().toUpperCase();
+  const username = document.getElementById('login-username').value;
+  const password = document.getElementById('login-password').value;
+  const errorEl = document.getElementById('login-error');
+  
+  const enrolled = ENROLLED_CODES[code];
+  if (!enrolled) {
+    errorEl.textContent = 'Invalid enrollment code.';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  if (username !== enrolled.role || password !== enrolled.password) {
+    errorEl.textContent = 'Username or password does not match this enrollment code.';
+    errorEl.classList.remove('hidden');
+    return;
+  }
+  
+  currentUser = {
+    code: code,
+    role: enrolled.role,
+    username: username,
+    name: username.charAt(0).toUpperCase() + username.slice(1),
+    loginTime: new Date().toISOString()
+  };
+  
+  localStorage.setItem('app2026_user', JSON.stringify(currentUser));
+  document.getElementById('login-overlay').classList.add('hidden');
+  updateUserDisplay();
+}
+
+function updateUserDisplay() {
+  // Remove old badge from header if it exists
+  const oldBadge = document.getElementById('user-badge');
+  if (oldBadge) oldBadge.remove();
+}
+
+function logoutUser() {
+  localStorage.removeItem('app2026_user');
+  localStorage.removeItem('app2026_descriptor_progress');
+  localStorage.removeItem('app2026_skill_progress');
+  currentUser = null;
+  location.reload();
+}
+
+function checkAuth() {
+  const saved = localStorage.getItem('app2026_user');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    const overlay = document.getElementById('login-overlay');
+    if (overlay) overlay.classList.add('hidden');
+    updateUserDisplay();
+  }
+}
+// Run on load
+checkAuth();
+
+
       
         
 
