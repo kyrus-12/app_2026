@@ -3125,6 +3125,22 @@
           updateUserDisplay();
         }
       }
+
+      function markDescriptorComplete() {
+        if (!currentUser) {alert('Please login first'); return;}
+        const key = `${selectedSubtopic}_${selectedProficiency}`;
+        const lessonKey = document.querySelector('#lesson-content h2')?.textContent || 'Module';
+        const descData = JSON.parse(localStorage.getItem('app2026_descriptor_progress') || '{}');
+        if (!descData[key]) descData[key] = {};
+        descData[key][lessonKey] = {
+          title: lessonKey,
+          topic: selectedSubtopic,
+          level: selectedProficiency,
+          completedAt: new Date().toLocaleString()
+        };
+        localStorage.setItem('app2026_descriptor_progress', JSON.stringify(descData));
+        alert('Module marked as complete! It will appear on your certificate.')
+      }
         
 
 
