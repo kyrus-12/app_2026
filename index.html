@@ -2998,6 +2998,62 @@
         });
       })();
 
+      const MODULES = [
+        {char:'A', word:'Adaptive', sub:'Shapes to the Learner'},
+        {char:'I', word:'Interactive', sub:'Responds in real time'},
+        {char:'G', word:'Guided', sub:'Structured Walkthroughs'},
+        {char:'H', word:'Hands-on', sub:'Learn by doing'},
+        {char:'A', word:'Activity', sub:'Applied practice'},
+        {char:'M', word:'Module', sub:'Self-contained unit'},
+        ];
+
+      const row = document.getElementById('aigham-row');
+      const needle = document.getElementById('gauge-needle');
+      const readout = document.getElementById('dial-readout');
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      MODULES.forEach((m, i) => {
+        const tile = document.createElement('div');
+        tile.className = 'letter-tile';
+        tile.innerHTML = `
+        <span class="char">${m.char}</span>
+        <div class="meaning-tag">
+        <div class="tag-word">${m.word}</div>
+        <div class="tag-sub">${m.sub}</div>
+        </div>`;
+        tile.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const tag = tile.querySelector('.meaning-tag');
+          const wasOpen = tag.classList.contains('show');
+          document.querySelectorAll('.meaning-tag').forEach(t => t.classList.remove('show'));
+          if (!wasOpen) tag.classList.add('show');
+        });
+        row.appendChild(tile);
+      });
+
+      document.addEventListener('click', () => {
+        document.querySelectorAll('.meaning-tag').forEach(t => t.classList.remove('show'));
+      });
+
+      const tiles = row.querySelectorAll('.letter-tile');
+      let current = 0;
+
+      function sweepTo(index){
+        const m = MODULES[index];
+        const angle = -70 + (140 / (MODULES.length - 1)) * index;
+        needle.style.transform = `rotate(${angle}deg)`;
+        readout.textContent = m.word.toUpperCase();
+        tiles.forEach((t, i) => t.classList.toggle('active', i === index));
+      }
+
+      sweepTo(0);
+      if (!reduceMotion){
+        setInterval(() => {
+          current = (current + 1) % MODULES.length;
+          sweepTo(current);
+        }, 1600);
+      }
+
 
 
 
