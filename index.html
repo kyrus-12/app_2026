@@ -1218,64 +1218,64 @@
           width:150px;
         }
       }
-        @media(prefers-reduced-motion: reduce){
-          .login-card{
-            animation:none;
-          }
-          .gauge-needle{
-            transition:none;
-          }
-          .letter-tile{
-            transition:none;
-          }
+      @media(prefers-reduced-motion: reduce){
+        .login-card{
+          animation:none;
         }
-        #circuitSvg{
-          position:absolute;
-          inset:0;
-          width:100%;
-          height:100%;
-          z-index:0;
-          pointer-events:none;
+        .gauge-needle{
+          transition:none;
         }
-        .trace-base{
-          fill:none;
-          stroke:var(--clay);
-          stroke-width:1.5;
-          stroke-linecap:round;
-          stroke-linejoin:round;
-          opacity:0.28;
+        .letter-tile{
+          transition:none;
         }
-        .trace-current{
-          fill:none;
-          stroke-width:3;
-          stroke-linecap:round;
-          stroke-linejoin:round;
-          stroke-dasharray:14 260;
-          filter:url(#glow);
-          animation:flow linear infinite;
-        }
-        .trace-current.ember{
-          stroke:var(--ember);
-        }
-        .trace-current.brass{
-          stroke:var(--brass);
-        }
-        @keyframes flow{
-          to{ stroke-dashoffset:-1400;}
-        }
-        .entry-pad{
-          fill:var(--brass);
-          filter:url(#glow);
-          animation:padPulse 2.4s ease-in-out infinite;
-        }
-        @keyframes padPulse{
-          0%, 100%{
-            opacity:0.55;
-            r:4;}
-          50%{ 
-            opacity:1;
-            r:6;}
-        }
+      }
+      #circuitSvg{
+        position:absolute;
+        inset:0;
+        width:100%;
+        height:100%;
+        z-index:0;
+        pointer-events:none;
+      }
+      .trace-base{
+        fill:none;
+        stroke:var(--clay);
+        stroke-width:1.5;
+        stroke-linecap:round;
+        stroke-linejoin:round;
+        opacity:0.28;
+      }
+      .trace-current{
+        fill:none;
+        stroke-width:3;
+        stroke-linecap:round;
+        stroke-linejoin:round;
+        stroke-dasharray:14 260;
+        filter:url(#glow);
+        animation:flow linear infinite;
+      }
+      .trace-current.ember{
+        stroke:var(--ember);
+      }
+      .trace-current.brass{
+        stroke:var(--brass);
+      }
+      @keyframes flow{
+        to{ stroke-dashoffset:-1400;}
+      }
+      .entry-pad{
+        fill:var(--brass);
+        filter:url(#glow);
+        animation:padPulse 2.4s ease-in-out infinite;
+      }
+      @keyframes padPulse{
+        0%, 100%{
+          opacity:0.55;
+          r:4;}
+        50%{ 
+          opacity:1;
+          r:6;}
+      }
         
     </style>
   </head>
@@ -2997,131 +2997,8 @@
           resizeTimer = setTimeout(buildCircuit, 120);
         });
       })();
-        
 
-      const MODULES = [
-  { char:'A', word:'Adaptive',    sub:'Shapes to the learner' },
-  { char:'I', word:'Interactive', sub:'Responds in real time' },
-  { char:'G', word:'Guided',      sub:'Structured walkthroughs' },
-  { char:'H', word:'Hands-on',    sub:'Learn by doing' },
-  { char:'A', word:'Activity',    sub:'Applied practice' },
-  { char:'M', word:'Module',      sub:'Self-contained unit' },
-];
 
-const row = document.getElementById('aigham-row');
-const needle = document.getElementById('gauge-needle');
-const readout = document.getElementById('dial-readout');
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-MODULES.forEach((m, i) => {
-  const tile = document.createElement('div');
-  tile.className = 'letter-tile';
-  tile.innerHTML = `
-    <span class="char">${m.char}</span>
-    <div class="meaning-tag">
-      <div class="tag-word">${m.word}</div>
-      <div class="tag-sub">${m.sub}</div>
-    </div>`;
-  tile.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const tag = tile.querySelector('.meaning-tag');
-    const wasOpen = tag.classList.contains('show');
-    document.querySelectorAll('.meaning-tag').forEach(t => t.classList.remove('show'));
-    if (!wasOpen) tag.classList.add('show');
-  });
-  row.appendChild(tile);
-});
-
-document.addEventListener('click', () => {
-  document.querySelectorAll('.meaning-tag').forEach(t => t.classList.remove('show'));
-});
-
-const tiles = row.querySelectorAll('.letter-tile');
-let current = 0;
-
-function sweepTo(index){
-  const m = MODULES[index];
-  const angle = -70 + (140 / (MODULES.length - 1)) * index;
-  needle.style.transform = `rotate(${angle}deg)`;
-  readout.textContent = m.word.toUpperCase();
-  tiles.forEach((t, i) => t.classList.toggle('active', i === index));
-}
-
-sweepTo(0);
-if (!reduceMotion){
-  setInterval(() => {
-    current = (current + 1) % MODULES.length;
-    sweepTo(current);
-  }, 1600);
-}
-
-        const ENROLLED_CODES = {
-  'STUDENT2026': { role: 'student', password: 'student' },
-  'KYRUS2026': { role: 'student', password: 'kyky@1122' },
-  'ADMIN2026':   { role: 'admin',   password: 'admin' },
-  'GUEST2026':   { role: 'guest',   password: 'guest' }
-};
-
-let currentUser = null;
-let questionStartTime = null;
-
-function handleLogin() {
-  const code = document.getElementById('login-code').value.trim().toUpperCase();
-  const username = document.getElementById('login-username').value;
-  const password = document.getElementById('login-password').value;
-  const errorEl = document.getElementById('login-error');
-  
-  const enrolled = ENROLLED_CODES[code];
-  if (!enrolled) {
-    errorEl.textContent = 'Invalid enrollment code.';
-    errorEl.classList.remove('hidden');
-    return;
-  }
-  
-  if (username !== enrolled.role || password !== enrolled.password) {
-    errorEl.textContent = 'Username or password does not match this enrollment code.';
-    errorEl.classList.remove('hidden');
-    return;
-  }
-  
-  currentUser = {
-    code: code,
-    role: enrolled.role,
-    username: username,
-    name: username.charAt(0).toUpperCase() + username.slice(1),
-    loginTime: new Date().toISOString()
-  };
-  
-  localStorage.setItem('app2026_user', JSON.stringify(currentUser));
-  document.getElementById('login-overlay').classList.add('hidden');
-  updateUserDisplay();
-}
-
-function updateUserDisplay() {
-  // Remove old badge from header if it exists
-  const oldBadge = document.getElementById('user-badge');
-  if (oldBadge) oldBadge.remove();
-}
-
-function logoutUser() {
-  localStorage.removeItem('app2026_user');
-  localStorage.removeItem('app2026_descriptor_progress');
-  localStorage.removeItem('app2026_skill_progress');
-  currentUser = null;
-  location.reload();
-}
-
-function checkAuth() {
-  const saved = localStorage.getItem('app2026_user');
-  if (saved) {
-    currentUser = JSON.parse(saved);
-    const overlay = document.getElementById('login-overlay');
-    if (overlay) overlay.classList.add('hidden');
-    updateUserDisplay();
-  }
-}
-// Run on load
-checkAuth();
 
 
       
