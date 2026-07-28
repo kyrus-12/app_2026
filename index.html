@@ -1348,6 +1348,8 @@
           </div>
           <div class="mb-4 flex flex-wrap gap-2" id="module-buttons"></div>
           <div class="lesson-container" id="lesson-content"></div>
+          <button class="btn btn-success text-xs" onclick="markDescriptorComplete()">Mark Module Complete</button>
+          <button class="btn btn-primary text-xs" onclick="generateCertificate()">Generate Certificate</button>div>
         </div>
 
         <div id="skill-panel" class="hidden">
@@ -3141,7 +3143,22 @@
         localStorage.setItem('app2026_descriptor_progress', JSON.stringify(descData));
         alert('Module marked as complete! It will appear on your certificate.')
       }
-        
+
+      function saveSkillProgress() {
+        if (!currentUser) return;
+        const key = `${selectedSubtopic}_${selectedSkill}`;
+        const skillData = JSON.parse(localStorage.getItem('app2026_skill_progress') || '{}');
+        skillData[key] = {
+          testName: selectedTestName,
+          subtopic: selectedSubtopic,
+          skillLevel: selectedSkillLevel,
+          score: quizScore,
+          total: quizQuestions.length,
+          history: quizHistory,
+          completedAt: new Date().toLocaleString()
+        };
+        localStorage.setItem('app2026_skill_progress', JSON.stringify(skillData));
+      }
 
 
 
