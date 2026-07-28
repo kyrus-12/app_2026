@@ -925,8 +925,8 @@
       }
       .login-card{
         position:relative;
-        width:100%;
-        max-width:440px;
+        width:92vw;
+        max-width:min(440px, 92vw;
         background:var(--paper);
         border:1px solid var(--line);
         border-radius:0.6rem;
@@ -969,8 +969,8 @@
       .letter-tile{
         position:relative;
         cursor:pointer;
-        width:48%;
-        height:52px;
+        width:clamp(36px, 10vw, 48px);
+        height:clamp(42px, 12vw, 52px);
         display:flex;
         align-items:center;
         justify-content:center;
@@ -991,7 +991,7 @@
       .letter-tile .char{
         font-family:'Fraunces', serif;
         font-weight:600;
-        font-size:1.5rem;
+        font-size:clamp(1.1rem, 4vw, 1.5rem);
         color:var(--clay-dark);
         text-shadow:0 1px 0 rgba(255,255,255,0.6);
         transition:color 0.3s ease, text-shadow 0.3s ease;
@@ -1077,7 +1077,7 @@
         top:calc(100% + 14px);
         left:50%;
         transform:translateX(-50%) translateY(-8px) scale(0.92);
-        width:190px;
+        width:clamp(140px, 50vw, 190px);
         background:#FBF3E3;
         border:1px solid var(--line);
         border-radius:0.35rem;
@@ -1208,11 +1208,11 @@
           padding:1.6rem 1.4rem 1.6rem;
         }
         .letter-tile{
-          width:38px;
-          height:44px;
+          width:clamp(32px, 11vw, 40px);
+          height:clamp(38px, 13vw, 46px);
         }
         .letter-tile .char{
-          font-size:1.2rem;
+          font-size:1.1rem;
         }
         .meaning-tag{
           width:150px;
@@ -1226,6 +1226,12 @@
           }
           .letter-tile{
             transition:none;
+          }
+          .trace-current{
+            animation:none;
+          }
+          .entry-pad{
+            animation:none
           }
         }
         #circuitSvg{
@@ -2921,7 +2927,7 @@
         const padG = document.getElementById('pads');
         const card = document.querySelector('.login-card');
 
-        const NS = 'https://www.w3.org/2000/svg';
+        const NS = 'http://www.w3.org/2000/svg';
         function el(tag, attrs){
           const e = document.createElementNS(NS, tag);
           for (const k in attrs) e.setAttribute(k, attrs[k]);
