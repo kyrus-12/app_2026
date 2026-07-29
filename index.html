@@ -3159,7 +3159,7 @@
         skillData[key] = {
           testName: selectedTestName,
           subtopic: selectedSubtopic,
-          skillLevel: selectedSkillLevel,
+          skillLevel: selectedSkill,
           score: quizScore,
           total: quizQuestions.length,
           history: quizHistory,
@@ -3372,12 +3372,12 @@
         <body>
         <div class="cert">
         <div class="header">
-        <div style="font-size:3.5rem;">🌟🌟🌟🌟🌟</div>
-        <div class="title">CONGRATULATIONS!🥳</div>
+        <div style="font-size:3.5rem;"></div>
+        <div class="title">CONGRATULATIONS!</div>
         <div class="subtitle">AIGHAM's Learning Platform</div>
         </div>
 
-        <div class="student-name">${currentUser.name}</div>
+        <div class="student-name">🌟🌟🌟🌟🌟</div>
         <div class="meta">Code: <b>${currentUser.code}</b> &nbsp;|&nbsp; Role: <b>${currentUser.role.toUpperCase()}</b> &nbsp;|&nbsp; Date: <b>${new Date().toLocaleDateString()}</b></div>
 
         ${descriptorHtml}
