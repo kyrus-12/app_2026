@@ -1396,6 +1396,7 @@
                 <button class="btn btn-primary" onclick="restartQuiz()">Restart Quiz</button>
                 <button class="btn" onclick="backToTestSelection()">Back to Tests</button>
                 <button class="btn" onclick="resetSelections()">Back to Home</button>
+                <button class="btn btn-primary" onclick="generateCertificate()">Generate Certificate</button>
               </div>
             </div>
           </div>
@@ -2282,6 +2283,7 @@
         quizAnswered = false;
         updateQuizProgress();
         enableChatInput();
+        questionStartTime = Date.now();
       }
       
       function handleChatKeydown(event){
@@ -2348,14 +2350,17 @@
         
         quizAttempted++;
         if(isCorrect) quizScore++;
-        
+
+        const durationSec = questionStartTime ? ((Date.now() - questionStartTime) / 1000).toFixed(1) : '0:0';
         quizHistory.push({
           question: q.q,
           userAnswer: userAnswer,
           correctAnswer: q.a,
           isCorrect: isCorrect,
           type: q.type,
-          explanation: q.explanation || ''
+          explanation: q.explanation || '',
+          duration: durationSec,
+          timeStamp: new Date().toLocaleString()
         });
         
         addTypingIndicator();
@@ -2518,6 +2523,7 @@
       }
       
       function showQuizComplete(){
+        saveSkillProgress();
         hide(document.getElementById('chat-section'));
         show(document.getElementById('quiz-complete'));
         document.getElementById('final-score').textContent = quizScore;
