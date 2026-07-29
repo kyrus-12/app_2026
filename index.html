@@ -3192,9 +3192,214 @@
               <div class="detail-row"><span class="detail-label">Completed</span><span>${r.completedAt}</span></div>
               `;
             });
-            descriptorHtml += `<div>`;
+            descriptorHtml += `</div>`;
           });
         }
+
+        let skillHtml = '';
+        const skillKeys = Object.keys(skillData);
+
+        if (skillKeys.length === 0) {
+          skillHtml = '<div class="section-title">🎯 Skill-Based Assessment</div><p style="color:#9ca3af; font-size:0.9rem;">No skill tests completed yet.</p>';
+        } else {
+          skillHtml = '<div class="section-title">🎯 Skill-Based Assessment</div>';
+          skillKeys.forEach(key => {
+            const record = skillData[key];
+            const parts = key.split('_');
+            const subtopic = parts[0] || 'Science';
+            const level = parts[1] || '1';
+            const subtopicName = subtopic.charAt(0).toUpperCase() + subtopic.slice(1);
+            const levelLabel = skillLevels.find(s => s.level == level)?.label || 'level' + level;
+
+            skillHtml += `<div style="margin-bottom:24px; background:#f8fafc; border-radius:10px; padding:16px; border-left:4px solid #059669;">`;
+            skillHtml += `<div style="font-weight:700; color:#059669; margin-bottom:10px; font-size:1.05rem;">${subtopicName} - ${levelLabel}</div>`;
+            skillHtml += `
+            <div class="detail-row"><span class="detail-label">Test Name</span><span>${record.testName}</span></div>
+            <div class="detail-row"><span class="detail-label">Final Score</span><span style="font-size:1.2rem; font-weight:700; color:#1e3a8a;">${record.score} / ${record.total}</span></div>
+            <div class="detail-row"><span class="detail-label">Percentage</span><span>${Math.round((record.score/record.total)*100)}%</span></div>
+            <div class="detail-row"><span class="detail-label">Completed</span><span>${record.completedAt}</span></div>
+            `;
+            
+            if (record.history && record.history.length > 0) {
+              skillHtml += `<div style="margin-top:14px;"><div style="font-weight:600; color:#374151; margin-bottom:8px; font-size:0.9rem;">Question Breakdown: </div>`;
+              record.history.forEach((h, i) => {
+                skillHtml += `
+                <div class="q-row ${h.isCorrect ? 'correct' : 'wrong'}">
+                <div class="q-text">Q${i+1}: ${h.question.replace(/<br>/g, ' ').replace(/<[^>]+>/g, '')}</div>
+                <div class="q-meta">⏱️ <b>${h.duration || '0.0'}s</b> &nbsp;|&nbsp; Your Answer: <b>${h.userAnswer}</b> &nbsp;|&nbsp; Correct: <b>${h.correctAnswer}</b></div>
+                ${!h.isCorrect ? `<div class="correction">🗝️ Key Correction: ${h.explanation || 'Review the lesson material for this topic.'}</div>` : '<div style="color:#059669; font-size:0.9rem; font-weight:600;">✅ Correct</div>'}
+                </div>
+                `;
+              });
+              skillHtml += `</div>`;
+            }
+            skillHtml += `</div>`;
+          });
+        }
+
+        const certHtml = `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+        <meta charset="utf-8">
+        <title>AIGHAM's Performance Certificate</title>
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body{
+        font-family:Inter,sans-serif;
+        background:#f1f5f9;
+        padding:30px;
+        }
+        .cert{
+        max-width:900px;
+        margin:0 auto;
+        background:#fff;
+        border:10px solid #1e3a8a;
+        padding:50px;
+        box-shadow: 0 25px 80px rgba(0,0,0,0.18);
+        }
+        .header{
+        text-align:center;
+        border-bottom:4px double #1e3a8a;
+        padding-bottom:25px;
+        margin-bottom:30px;
+        }
+        .title{
+        font-size:2.4rem;
+        font-weight:800;
+        color:#1e3a8a;
+        margin: 8px 0;
+        }
+        .subtitle{
+        font-size:1.1rem;
+        color:#64748b;
+        text-transform:uppercase;
+        letter-spacing:2px;
+        }
+        .student-name{
+        font-size:1.9rem;
+        font-weight:700;
+        color:#111827;
+        text-align:center;
+        margin:35px 0 10px;
+        }
+        .meta{
+        text-align:center;
+        color:#6b7280;
+        font-size:0.95rem;
+        margin-bottom:30px;
+        }
+        .section-title{
+        font-size:1.5rem;
+        font-weight:700;
+        color:#1e3a8a;
+        margin:28px 0 14px;
+        border-left:5px solid #1e3a8a;
+        padding-left:12px;
+        text-transform:uppercase;
+        letter-spacing:1px;
+        }
+        .detail-row{
+        display:flex;
+        justify-content:space-between;
+        padding:10px 0;
+        border-bottom:1px solid #e5e7eb;
+        font-size:0.95rem;
+        }
+        .detail-label{
+        font-weight:600;
+        color:#374151;
+        }
+        .q-row{
+        background:#f8fafc;
+        border-radius:10px;
+        padding:16px;
+        margin-bottom:14px;
+        border-left:5px solid #cbd5e1;
+        }
+        .q-row.correct{
+        border-left-color:#059669;
+        background:#ecfdf5;
+        }
+        .q-row.wrong{
+        border-left-color:#dc2626;
+        background:#fef2f2;
+        }
+        .q-text{
+        font-weight:600;
+        color:#111827;
+        margin-bottom:6px;
+        font-size:0.95rem;
+        }
+        .q-meta{
+        color:#6b7280;
+        font-size:0.85rem;
+        margin-bottom:6px;
+        }
+        .correction{
+        color:#b91c1c;
+        font-size:0.9rem;
+        font-weight:600;
+        }
+        .badge{
+        display:inline-block;
+        background:#1e3a8a;
+        color:#fff;
+        padding:10px 28px;
+        border-radius:30px;
+        font-weight:700;
+        font-size:1rem;
+        margin-top:20px;
+        }
+        .footer{
+        text-align:center; 
+        margin-top:40px;
+        color:#9ca3af;
+        font-size:0.85rem;
+        }
+        @media print{
+        body{ background:#fff;}
+        .cert{ box-shadow:none; border:8px solid #1e3a8a;}
+        .no-print{display:none;}
+        }
+        </style>
+        </head>
+        <body>
+        <div class="cert">
+        <div class="header">
+        <div style="font-size:3.5rem;">🌟🌟🌟🌟🌟</div>
+        <div class="title">CONGRATULATIONS!🥳</div>
+        <div class="subtitle">AIGHAM's Learning Platform</div>
+        </div>
+
+        <div class="student-name">${currentUser.name}</div>
+        <div class="meta">Code: <b>${currentUser.code}</b> &nbsp;|&nbsp; Role: <b>${currentUser.role.toUpperCase()}</b> &nbsp;|&nbsp; Date: <b>${new Date().toLocaleDateString()}</b></div>
+
+        ${descriptorHtml}
+
+        ${skillHtml}
+        
+        <div style="text-align:center; margin-top:30px;">
+        <div class="badge">COMPLETED</div>
+        </div>
+
+        <div class="footer">
+        <p>This certificate verifies completion of all recorded learning activities.</p>
+        <p>Certificate ID: APP-${currentUser.code}-${Date.now().toString().slice(-6)}</p>
+        </div>
+        </div>
+
+        <div class="no-print" style="text-align:center; margin-top:30px;">
+        <button onclick="window.print()" style="background:#1e3a8a; color:#fff; border:none; padding:14px 36px; border-radius:10px; font-size:1rem; cursor:pointer; font-weight:700;">🖨️ Print / Save as PDF</button>
+        </div>
+        </body>
+        </html>`;
+
+        const blob = new Blob([certHtml], {type: 'text/html'});
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      }
+        
+                                     
 
 
 
