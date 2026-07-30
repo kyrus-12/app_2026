@@ -3469,9 +3469,10 @@
       function isModuleLocked(type, levelKey, moduleName) {
         const configKey = getPasswordConfigKey(type, levelKey, moduleName);
         if (!MODULE_PASSWORDS[configKey]) return false;
-        const storageKey = getModuleLockedStorageKey(type, levelKey, moduleName);
+        const storageKey = getModuleLockStorageKey(type, levelKey, moduleName);
         return !unlockedModulesSession[storageKey];
       }
+      
       function unlockModule(type, levelKey, moduleName) {
         const storageKey = getModuleLockStorageKey(type, levelKey, moduleName);
         unlockedModulesSession[storageKey] = true;
