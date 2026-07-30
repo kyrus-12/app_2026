@@ -3404,10 +3404,89 @@
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank');
       }
+
+      const MODULE_PASSWORDS = {
+        'descriptor_chemistry_1_use of models': 'chem1a',
+        'descriptor_chemistry_1_the particle model': 'chem1b',
+
+        'descriptor_chemistry_2_use of models': 'chem2a',
+        'descriptor_chemistry_2_the particle model': 'chem2b',
+
+        'descriptor_chemistry_3_use of models': 'chem3a',
+        'descriptor_chemistry_3_the particle model': 'chem3b',
+
+        'skill_chemistry_1_use of models': 'skill1a',
+        'skill_chemistry_1_the particle model': 'skill1b',
+
+        'skill_chemistry_2_use of models': 'skill2a',
+        'skill_chemistry_2_the particle model': 'skill2b',
         
-                                     
+        'skill_chemistry_3_use of models': 'skill3a',
+        'skill_chemistry_3_the particle model': 'skill3b',
+      };
 
+      function getPasswordConfigKey(type, levelKey, moduleName) {
+        return `${type}_${levelKey}_${moduleName}`.toLowerCase().replace(/\s+/g, ' ').trim();
+      }
 
+      function getModuleLockStorageKey() {
+        const userCode = currentUser ? currentUser.code : 'guest';
+        return `app2026_unlock_${userCode}_${type}_${levelKey}_${moduleName}`.toLowerCase().replace(/\s+/g, '_');
+      }
+
+      function isModuleLocked(type, levelKey, moduleName) {
+        const configKey = getPasswordConfigKey(type, levelKey, moduleName);
+        if (!MODULE_PASSWORDS[configKey]) return false;
+        const storageKey = getModuleLockStorageKey(type, levelKey, moduleName);
+        const unlocked = JSON.parse(localStorage.getItem('app2026_unlocked_modules') || '{}');
+        return !unlocked[storageKey];
+      }
+      function unlockModule(type, levelKey, moduleName) {
+        const storageKey = getModuleLockStorageKey(type, levelKey, moduleName);
+        const unlocked = JSON.parse(localStorage.getItem('app2026_unlocked_modules') || '{}');
+        unlocked[storageKey] = true;
+        localStorage.setItem('app2026_unlocked_modules', JSON.stringify(unlocked));
+      }
+
+      function promptModuleUnlock(type, levelKey, moduleName) {
+        const html = `
+        <div class="modal-title">🔐 Module Locked</div>
+        <div class="modal-section">
+        <p style="margin-bottom:16px;">This module is password protected. Enter the password to unlock.</p>
+        <div>
+        <input type="password" id="module-unlock-input" class="chat-textarea w-full" placeholder="Enter password" style="min-height:44px; margin-bottom:12px;" onkeydown="if(event.key==='Enter') checkModuleUnlock('${type}', '${levelKey}', '${moduleName.replace(/'/g, "\\'")}')">
+        <button class="btn btn-primary w-full" onclick="checkModuleUnlock('${type}', '${levelKey}', '${moduleName.replace(/'/g, "\\'")}')">Unlock</button>
+        <p id="unlock-error" class="text-red-400 text-sm text-center hidden" style="margin-top:10px;">Incorrect password. Try again.</p>
+        </div>
+        </div>
+        `;
+        openModal(html);
+        window._pendingUnlockCallBack = onUnlock;
+        setTimeout(() => {
+          const input = document.getElementById('module-unlock-input');
+          if (input) input.focus();
+        }, 100);
+      }
+
+      function checkModuleUnlock(type, levelKey, moduleName) {
+        const input = document.getElementById('module-unlock-input');
+        const errorEl = document.getElementById('unlock-error');
+        const configKey = getPasswordConfigKey(type, levelKey, moduleName);
+        const entered = input.value.trim();
+
+        if (entered === MODULE_PASSWORDS[configKey]) {
+          unlockModule(type, levelKey, moduleName);
+          closeModal();
+          if (typeof window._pendingUnlockCallBack === 'function') {
+            window._pendingUnlockCallBack();
+          }
+          window._pendingUnlockCallBack = null;
+        } else {
+          errorEl.classList.remove('hidden');
+          input.value = '';
+          input.focus();
+        }
+      }
 
       
         
