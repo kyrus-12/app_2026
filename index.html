@@ -1890,6 +1890,8 @@
       }
       
       function handleBack(){
+        selectedProficiency = null;
+        selectedSkill = null;
         if(currentStep === 4){ currentStep = 3; selectedTestName=null; resetQuiz(); }
         else if(currentStep === 3){ currentStep = 2; selectedMode = null; selectedTestName=null; }
         else if(currentStep === 2){ currentStep = 1; selectedSubtopic = null; selectedTestName=null; }
