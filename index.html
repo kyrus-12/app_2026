@@ -3478,7 +3478,7 @@
         unlockedModulesSession[storageKey] = true;
       }
 
-      function promptModuleUnlock(type, levelKey, moduleName) {
+      function promptModuleUnlock(type, levelKey, moduleName, onUnlock) {
         const html = `
         <div class="modal-title">🔐 Module Locked</div>
         <div class="modal-section">
