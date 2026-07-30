@@ -3464,12 +3464,12 @@
         return `app2026_unlock_${userCode}_${type}_${levelKey}_${moduleName}`.toLowerCase().replace(/\s+/g, '_');
       }
 
+      let unlockedModuleSession = {};
+
       function isModuleLocked(type, levelKey, moduleName) {
         const configKey = getPasswordConfigKey(type, levelKey, moduleName);
         if (!MODULE_PASSWORDS[configKey]) return false;
-        const storageKey = getModuleLockStorageKey(type, levelKey, moduleName);
-        const unlocked = JSON.parse(localStorage.getItem('app2026_unlocked_modules') || '{}');
-        return !unlocked[storageKey];
+        unlockedModuleSession[storageKey] = true;
       }
       function unlockModule(type, levelKey, moduleName) {
         const storageKey = getModuleLockStorageKey(type, levelKey, moduleName);
