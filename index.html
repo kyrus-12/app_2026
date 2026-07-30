@@ -1931,15 +1931,29 @@
         
         Object.keys(modulesObj).forEach((lessonKey, idx) => {
           const mod = modulesObj[lessonKey];
+          const locked = isModuleLocked('descriptor', key, lessonKey);
           const btn = document.createElement('button');
-          btn.className = 'btn btn-primary text-xs';
-          btn.textContent = mod.title;
-          btn.onclick = () => loadModuleByIndex(key, lessonKey);
+          btn.className = 'btn btn-primary text-xs' + (locked ? ' opacity-50' : '');
+          btn.innerHTML = (locked ? '🔒' : '') + mod.title;
+          btn.onclick = () => {
+            if (isModuleLocked('descriptor', key, lessonKey)) {
+              promptModuleUnlock('descriptor', key, lessonKey, () => {
+                initDescriptorMode();
+                setTimeout(() => loadModuleByIndex(key, lessonKey), 100);
+              });
+            } else {
+              loadModuleByIndex(key, lessonKey);
+            }
+          };
           buttonsDiv.appendChild(btn);
         });
         
         const firstKey = Object.keys(modulesObj)[0];
-        loadModuleByIndex(key, firstKey);
+        if (isModuleLocked('descriptor', key, lessonKey)) {
+          contentDiv.innerHTML = `<div class="text-center py-12 fade-in"><div class="text-5xl mb-4">🔒</div><h3 class="text-xl font-bold text-blue-100 mb-2">Module Locked</h3><p class="text-gray-400 mb-4">This module is password protected. Click a module button above and enter a password to unlock.</p></div>`;
+        } else {
+          loadModuleByIndex(key, firstKey);
+        }
       }
       
       function loadModuleByIndex(key, lessonKey){
@@ -2137,10 +2151,20 @@
         
         Object.keys(testData).forEach(testName => {
           const isSummative = testName.startsWith('Summative');
+          const locked = isModuleLocked('skill', key, testName);
           const btn = document.createElement('button');
-          btn.className = `test-btn ${isSummative ? 'test-btn-summative' : 'test-btn-lesson'}`;
-          btn.textContent = `${testName} (${testData[testName].length} Q)`;
-          btn.onclick = () => startQuiz(testName);
+          btn.className = `test-btn ${isSummative ? 'test-btn-summative' : 'test-btn-lesson'}` + (locked ? ' opacity-50' : '');
+          btn.innerHTML = (locked ? '🔒' : '') + `${testName} (${testData[testName].length} Q)`;
+          btn.onclick = () => {
+            if (isModuleLocked('skill', key, testName)) {
+              promptModuleUnlock('skill', key, testName, () => {
+                initSkillMode();
+                setTimeout(() => startQuiz(testName), 100);
+              });
+            } else {
+              startQuiz(testName);
+            }
+          };
           buttonsContainer.appendChild(btn);
         });
       }
