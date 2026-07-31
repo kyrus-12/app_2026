@@ -1276,11 +1276,82 @@
           opacity:1;
           r:6;}
       }
+      #app-circuit-bg{
+        position:fixed;
+        inset:0;
+        width:100%;
+        height:100%;
+        z-index:0;
+        pointer-events:none;
+      }
+      #app-circuit-bg .trace-line{
+        fill:none;
+        stroke:var(--clay);
+        stroke-width:1.5;
+        stroke-linecap:round;
+        stroke-linejoin:round;
+        opacity:0.22;
+      }
+      #app-circuit-bg .trace-draw{
+        stroke-dasharray:var(--len) var(--len);
+        stroke-dashoffset:var(--len);
+        animation:drawLine 0.9s ease-out forwards;
+      }
+      @keyframes drawLine{
+        to{ stroke-dashoffset:0; }
+      }
+      #app-circuit-bg .trace-pulse{
+        fill:none;
+        stroke-width:3;
+        stroke-linecap:round;
+        stroke-dasharray:12 240;
+        filter:url(#appGlow);
+        opacity:0;
+        animation:appFlow linear infinite;
+      }
+      #app-circuit-bg .trace-pulse.ember{
+        stroke:var(--ember);
+      }
+      #app-circuit-bg .trace-pulse.brass{
+        stroke:var(--brass);
+      }
+      @keyframes appFlow{
+        0% {opacity:0; stroke-dashoffset:0;}
+        8% {opacity:1;}
+        100% {opacity:1; stroke-dashoffset:-1200px;}
+      }
+      #app-circuit-bg .app-pad{
+        fill:var(--brass);
+        opacity:0;
+        animation:padAppear 2.4s ease-in-out infinite;
+      }
+      @keyframes padAppear{
+        0% {opacity:0; r:2;}
+        15% {opacity:0.7; r:4;}
+        50% {opacity:1; r:6;}
+        100% {opacity:0.7; r:4;}
+      }
+      @media (prefers-reduced-motion: reduce){
+        #app-circuit-bg .trace-draw{ animation:none; stroke-dashoffset:0;}
+        #app-circuit-bg .trace-pulse{ display:none;}
+        #app-circuit-bg .app-pad{ animation:none; opacity:0.5;}
+      }
+      #main-content{
+        position:relative;
+        z-index:1;
+      }
+      body.has-image-bg #app-circuit-bg,
+      body.circuit-off #app-circuit-bg,
+      body.circuit-content-off #app-circuit-bg{
+        display:none;
+      }
         
     </style>
   </head>
 
   <body class="min-h-screen pb-footer">
+
+    <svg id="app-circuit-bg" xlmns="http://www.w3.org/2000/svg"></svg>
 
     <header class="sticky top-0 z-40">
       <div class="w-full px-8 py-4 flex items-center justify-between">
@@ -1810,6 +1881,8 @@
           if(selectedMode==='descriptor') initDescriptorMode();
           else initSkillMode();
         }
+        const inContentView = (currentStep === 4);
+        document.body.classList.toggle('circuit-content-off', inContentView);
       }
       
       function populateSubtopics(){
@@ -2919,6 +2992,9 @@
         document.documentElement.style.fontSize = size;
         document.body.style.fontSize = size;
 
+        const shouldHideCircuits = currentImageCategory !== 'none';
+        document.body.classList.toggle('circuit-off', shouldHideCircuits);
+
         closeModal();
       }
         
@@ -3519,6 +3595,86 @@
           input.focus();
         }
       }
+
+      function renderAppCircuits() {
+        const svg = document.getElementById('app-circuit-bg');
+        if (!svg) return;
+        svg.innerHTML = '';
+
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        svg.setAttribute('width', w);
+        svg.setAttribute('height', h);
+
+        const NS = 'http://www.w3.org/2000/svg';
+        function el(tag, attrs){
+          const e = document.createElementNS(NS, tag);
+          for (const k in attrs) e.setAttribute(k, attrs[k]);
+          return e;
+        }
+
+        const defs = el('defs', {});
+        const filter = el('filter', {id:'appGlow', x:'-200%', y:'-200%', width:'500%', height:'500%'});
+        const blur = el('feGaussianBlur', {stdDeviation:'3', result:'blur'});
+        const merge = el('feMerge', {});
+        merge.appendChild(el('feMergeNode', {in:'blur'}));
+        merge.appendChild(el('feMergeNode', {in:'SourceGraphic'}));
+        filter.appendChild(blur);
+        filter.appendChild(merge);
+        defs.appendChild(filter);
+        svg.appendChild(defs);
+
+        const target = document.getElementById('main-content');
+        const r = target ? target.getBoundingClientRect() : {left:w*0.3, top:100, width:w*0.4, height:h*0.5};
+
+        const LINE_COUNT = 10;
+
+        for (let i = 0; i < LINE_COUNT; i++){
+          const fromLeft = Math.random() < 0.6;
+          let startX, startY, midX, midY, endX, endY, d;
+
+          if (fromLeft){
+            startX = 0;
+            startY = Math.random() * h;
+            endX = r.left - 10;
+            endY = r.top + Math.random() * r.height;
+            midX = startX + (endX - startX) * (4.90 + Math.random() * 0.2);
+            d = `M ${startX},${startY} L ${midX},${startY} L ${midX},${endY} L ${endX},${endY}`;
+          } else {
+            startX = Math.random() * w;
+            startY = 0;
+            endX = r.left + Math.random() * r.width;
+            endY = r.top + Math.random() * r.height;
+            midY = startY + (endY - startY) * (4.90 + Math.random() * 0.2);
+            d = `M ${startX},${startY} L ${startX},${midY} L ${endX},${midY} L ${endX},${endY}`;
+          }
+
+          const base = el('path', {class:'trace-line trace-draw', d});
+          svg.appendChild(base);
+
+          const len = base.getTotalLength();
+          base.style.setProperty('--len', len);
+          base.style.animationDelay = (i * 0.2) + 's';
+
+          const pulse = el('path', {class:`trace-pulse ${i % 2 === 0 ? 'ember' : 'brass'}`, d});
+          pulse.style.animationDuration = (1.8 + Math.random() * 0.2) + 's';
+          pulse.style.animationDelay = (i * 0.2 + 0.9) + 's';
+          svg.appendChild(pulse);
+
+          const pad = el('circle', {class:'app-pad', cx:endX, cy:endY, r:4 });
+          pad.style.animationDelay = (i * 0.2 + 0.9) + 's';
+          svg.appendChild(pad);
+        }
+      }
+
+      let appCircuitResizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(appCircuitResizeTimer);
+        appCircuitResizeTimer = setTimeout(() => {
+          if (currentUser) renderAppCircuits();
+        }, 150);
+      });
 
       
         
