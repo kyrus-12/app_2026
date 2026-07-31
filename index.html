@@ -1373,7 +1373,10 @@
       </section>
 
       <div class="mb-6 flex justify-between items-center">
+        <div class="flex gap-3 items-center">
         <div class="hidden" id="back-button"><button class="btn" onclick="handleBack()">Back</button></div>
+        <div class="hidden" id="next-button"><button class="btn" onclick="handleNext()">Next</button></div>
+      </div>
         <div class="hidden" id="reset-button"><button class="btn" onclick="resetSelections()">Reset</button></div>
       </div>
 
@@ -1883,6 +1886,21 @@
         }
         const inContentView = (currentStep === 4);
         document.body.classList.toggle('circuit-content-off', inContentView);
+
+        const next = document.getElementById('next-button');
+        let hasNextLevel = false;
+        if (currentStep === 4){
+          if (selectedMode === 'descriptor' && selectedProficiency){
+            hasNextLevel = proficiencyLevels.some(p => p.level === selectedProficiency + 1);
+          } else if (selectedMode === 'skill' && selectedSkill){
+            hasNextLevel = skillLevels.some(s => s.level === selectedSkill + 1);
+          }
+        }
+        if (hasNextLevel){ 
+          next.classList.remove('hidden');
+        } else {
+          next.classList.add('hidden');
+        }
       }
       
       function populateSubtopics(){
@@ -1970,6 +1988,49 @@
         else if(currentStep === 2){ currentStep = 1; selectedSubtopic = null; selectedTestName=null; }
         else if(currentStep === 1){ currentStep = 0; selectedTopic = null; selectedTestName=null; }
         updateUI();
+      }
+
+      function handleNext() {
+        if (selectedMode === 'descriptor' && selectedProficiency){
+          const idx = proficiencyLevels.findIndex(p => p.level === selectedProficiency);
+          const nextLevel = proficiencyLevels[idx + 1];
+          if (!nextLevel) return;
+
+          const nextKey = `${selectedSubtopic}_${nextLevel.level}`;
+          const modulesObj = descriptorContent[nextKey];
+          const firstModuleKey = modulesObj ? Object.keys(modulesObj)[0] : null;
+
+          const toTheNextLevel = () => {
+            resetQuiz();
+            handleProficiencyClick(nextLevel.level);
+          };
+
+          if (firstModuleKey && isModuleLocked('descriptor', nextKey, firstModuleKey)){
+            promptModuleUnlock('descriptor', nextKey, firstModuleKey, goToNextLevel);
+          } else {
+            goToNextLevel();
+          }
+        }
+        else if (selectedMode === 'skill' && selectedSkill){
+          const idx = skillLevel.findIndex(s => s.level === selectedSkill);
+          const nextLevel = skillLevels[idx + 1];
+          if (!nextLevel) return;
+
+          const nextKey = `${selectedSubtopic}_${nextLevel.level}`;
+          const testData = skillQuestions[nextKey];
+          const firstTestName = testData ? Object.keys(testData)[0] : null;
+
+          const goToNextLevel = () => {
+            restartQuiz();
+            handleSkillClick(nextLevel.level);
+          };
+
+          if (firstTestName && isModuleLocked('skill', nextKey, firstTestName)){
+            promptModuleUnlock('skill', nextKey, firstTestName, goToNextLevel);
+          } else {
+            goToNextLevel();
+          }
+        }
       }
       
       function resetSelections(){
