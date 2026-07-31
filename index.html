@@ -2000,7 +2000,7 @@
           const modulesObj = descriptorContent[nextKey];
           const firstModuleKey = modulesObj ? Object.keys(modulesObj)[0] : null;
 
-          const toTheNextLevel = () => {
+          const goToNextLevel = () => {
             resetQuiz();
             handleProficiencyClick(nextLevel.level);
           };
@@ -2012,7 +2012,7 @@
           }
         }
         else if (selectedMode === 'skill' && selectedSkill){
-          const idx = skillLevel.findIndex(s => s.level === selectedSkill);
+          const idx = skillLevels.findIndex(s => s.level === selectedSkill);
           const nextLevel = skillLevels[idx + 1];
           if (!nextLevel) return;
 
@@ -2021,7 +2021,7 @@
           const firstTestName = testData ? Object.keys(testData)[0] : null;
 
           const goToNextLevel = () => {
-            restartQuiz();
+            resetQuiz();
             handleSkillClick(nextLevel.level);
           };
 
