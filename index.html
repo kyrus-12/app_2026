@@ -1345,6 +1345,234 @@
       body.circuit-content-off #app-circuit-bg{
         display:none;
       }
+      .presentation-overlay{
+        position:fixed;
+        inset:0;
+        z-index:200;
+        background: #0a0a0a;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        opacity:0;
+        visibility:hidden;
+        transition: opacity 0.4s, visibility 0.4s ease;
+      }
+      .presentation-overlay.active{
+        opacity:1;
+        visibility:visible;
+      }
+      .slide-stage{
+        width:100%;
+        height:100%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        position:relative;
+        overflow:hidden;
+      }
+      .slide{
+        width:90%;
+        max-width:1100px;
+        aspect-ratio:16/9;
+        background:linear-gradient(145deg, #111827, #0f1724);
+        border-radius:1rem;
+        border:1px solid rgba(96,165,250,0.1);
+        box-shadow:0 40px 80px rgba(0,0,0,0.6);
+        display:flex;
+        flex-direction:column;
+        padding:3rem;
+        position:absolute;
+        opacity:0;
+        transform:translateX(60px) scale(0.95);
+        transition:all 0.5s cubic-bezier(0.22,1,0.36,1);
+        pointer-events:none;
+      }
+      .slide-active{
+        opacity:1;
+        transform:translateX(0) scale(1);
+        pointer-events:auto;
+      }
+      .slide-prev{
+        opacity:0;
+        transform:translateX(-60px) scale(0.95);
+      }
+      .slide-title{
+        font-family:'Fraunces', serif;
+        font-size:2.2rem;
+        font-weight:700;
+        color:#e6f0ff;
+        margin-bottom:1.5rem;
+        line-height:1.2;
+      }
+      .slide-body{
+        font-size:1.1rem;
+        color:#cbd5e1;
+        line-height:1.8;
+        flex:1;
+        overflow-y:auto;
+      }
+      .slide-image{
+        max-width:100%;
+        max-height:320px;
+        border-radius:0.5rem;
+        border: 1px  solid rgba(96,165,250,0.15);
+        object-fit:contain;
+        margin-top:1rem;
+      }
+      .slide-layout-split .slide-image{
+        margin-top:0;
+        max-height:380px;
+        width:100%;
+      }
+      .slide-counter{
+        position:absolute;
+        bottom:1.5rem;
+        left:50%;
+        transform:translateX(-50%);
+        background:rgba(15,23,36,0.9);
+        border:1px solid rgba(96,165,250,0.15);
+        border-radius:2rem;
+        padding:0.4rem 1.2rem;
+        font-family:'IBM Plex Mono', monospace;
+        font-size:0.75rem;
+        color:#9ca3af;
+        z-index:10;
+      }
+      .slide-progress{
+        position:absolute;
+        bottom:0;
+        left:0;
+        height:3px;
+        background:var(--color-primary);
+        transition:width 0.4s ease;
+        z-index:10;
+      }
+      .slide-nav-btn{
+        position:absolute;
+        top:50%;
+        transform:translateY(-50%);
+        width:48px;
+        height:48px;
+        border-radius:50%;
+        background:rgba(15,23,36,0.8);
+        border:1px solid rgba(96,165,250,0.15);
+        color:#e6f0ff;
+        font-size:1.2rem;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        z-index:10;
+        transition:all 0.2s ease;
+      }
+      .slide-nav-btn:hover{
+        background:var(--color-primary);
+        border-color:var(--color-primary);
+      }
+      .slide-nav-btn.prev-btn{
+        left:1rem;
+      }
+      .slide-nav-btn.next-btn{
+        right:1rem;
+      }
+      .slide-exit-btn{
+        position:absolute;
+        top:1rem;
+        right:1rem;
+        background:rgba(220,38,38,0.2);
+        border:1px solid rgba(220,38,38,0.3);
+        color:#fca5a5;
+        padding:0.4rem 0.9rem;
+        border-radius:0.4rem;
+        font-size:0.75rem;
+        font-weight:600;
+        cursor:pointer;
+        z-index:10;
+        transition:all 0.2s ease;
+      }
+      .slide-exit-btn:hover{
+        background:rgba(220,38,38,0.4);
+      }
+      .slide-hint{
+        position:absolute;
+        bottom:3.5rem;
+        left:50%;
+        transform:translateX(-50%);
+        font-size:0.75rem;
+        color:rgba(156,163,175,0.5);
+        z-index:10;
+      }
+      .presentation-picker{
+        display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+        gap:1rem;
+        margin-top:1rem;
+      }
+      .presentation-card{
+        background:linear-gradient(180deg, var(--card), rgba(10,14,22,0.8));
+        border:1px solid rgba(96,165,250,0.08);
+        border-radius:0.85rem;
+        padding:1.5rem;
+        cursor:pointer;
+        transition:all 0.28s cubic-bezier(0.2,0.9,0.2,1);
+        text-align:center;
+      }
+      .presentation-card:hover{
+        transform:translateY(-4px);
+        border-color:rgba(96,165,250,0.2);
+        box-shadow:0 16px 40px rgba(96,165,250,0.08);
+      }
+      .presentation-card .icon{
+        font-size:2.5rem;
+        margin-bottom:0.75rem;
+      }
+      .presentation-card .title{
+        font-weight:700;
+        color:var(--text);
+        font-size:1.1rem;
+        margin-bottom:0.3rem;
+      }
+      .presentation-card .desc{
+        font-size:0.8rem;
+        color:var(--muted);
+      }
+      .presentation-card .slide-count{
+        margin-top:0.75rem;
+        font-family:'IBM Plex Mono', monospace;
+        font-size:0.7rem;
+        color:var(--color-glow);
+        background:rgba(96,165,250,0.08);
+        padding:0.2rem 0.6rem;
+        border-radius:0.25rem;
+        display:inline-block;
+      }
+      @media (max-width:768px) {
+        .slide{
+          padding:1.5rem;
+          width:95%;
+        }
+        .slide-title{
+          font-size:1.4rem;
+        }
+        .slide-body{
+          font-size:0.95rem;
+        }
+        .slide-layout-split{
+          grid-template-columns:1fr;
+        }
+        .slide-nav-btn{
+          width:40px;
+          height:40px;
+          font-size:1rem;
+        }
+        .slide-nav-btn.prev-btn{
+          left:0.5rem;
+        }
+        .slide-nav-btn.next-btn{
+          right:0.5rem;
+        }
+      }
         
     </style>
   </head>
@@ -1498,8 +1726,9 @@
 
       <div id="nav-menu" class="hidden fixed bottom-16 left-4 z-50 flex flex-col gap-2 bg-[#0f1724] p-3 rounded-xl border border-[rgba(96,165,250,0.12)] shadow-lg">
         <div class="nav-item" onclick="goHome()"><div>🏠︎</div><div>Home</div></div>
-        <div class="nav-item" onclick="showAbout()"><div>𝒊</div><div>About</div></div>
+        <div class="nav-item" onclick="showPresentations()"><div>💻</div><div>Present</div></div>
         <div class="nav-item cursor-pointer" onclick="showLab()"><div>🧪</div><div>Lab</div></div>
+        <div class="nav-item" onclick="showAbout()"><div>𝒊</div><div>About</div></div>
         <div class="nav-item" onclick="showSettings()"><div>⛭</div><div>Settings</div></div>
       </div>
 
