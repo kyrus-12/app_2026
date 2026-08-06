@@ -1573,6 +1573,15 @@
           right:0.5rem;
         }
       }
+      .enrol-btn{
+        background:transparent;
+        border:1px solid var(--ember);
+        color:var(--ember);
+      }
+      .enroll-btn:hover{
+        background:rgba(193,89,46,0.08);
+        transform:translateY(-2px);
+      }
         
     </style>
   </head>
@@ -1711,7 +1720,7 @@
       </div>
     </main>
 
-    <div id="modal-overlay" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4" style="background:rgba(2,6,23,0.85); backdrop-filter:blur(4px);">
+    <div id="modal-overlay" class="hidden fixed inset-0 z-[110] flex items-center justify-center p-4" style="background:rgba(2,6,23,0.85); backdrop-filter:blur(4px);">
       <div id="modal-content" class="bg-[#0f1724] border border-[rgba(96,165,250,0.12)] rounded-xl shadow-2xl max-w-lg w-full max-h-[80vh] overflow-y-auto p-6 relative fade-in">
         <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">&times;</button>
         <div id="modal-body"></div>
@@ -1782,6 +1791,7 @@
         </div>
 
         <button class="submit-btn" onclick="handleLogin()">Sign In</button>
+        <button class="submit-btn enroll-btn" onclick="openEnrollModal()">Enroll Here</button>
         <p id="login-error" class="login-error hidden">Check your credentials, then try again.</p>
       </div>
     </div>
@@ -3965,6 +3975,33 @@
           if (currentUser) renderAppCircuits();
         }, 150);
       });
+
+      const TALLY_FORM_ID = 'xY7Yxo';
+
+      function openEnrollModal(){
+        if (window.Tally){
+          Tally.openPopup(TALLY_FORM_ID, {layout: 'modal', width:500});
+        } else {
+          alert('The enrollment form could not load. Please check your internet connection and try again.');
+        }
+      }
+
+      window.addEventListener('message', function(event){
+        if (typeof event.data !== 'string' || !event.data.includes('Tally.FormSubmitted')) return;
+        Tally.closePopup(TALLY_FORM_ID);
+        showEnrollThankYou();
+      });
+
+      function showEnrollThankYou(){
+        const html = `
+        <div class="modal-title">Thank You!</div>
+        <div class="modal-section" style="text-align:center; padding:1rem 0;">
+        <p style="margin-bottom:12px;">Your enrollment form is under reviewed.</p>
+        <p style="color:var(--muted); font-size:0.85rem;">Please wait for the email confirmation of your AIGHAM account.</p>
+        </div>`;
+        openModal(html);
+        setTimeout(() => {closeModal();}, 5000);
+      }
 
       
         
