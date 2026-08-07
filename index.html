@@ -4142,7 +4142,97 @@
         stage.innerHTML = '';
         stage.appendChild(slideEl);
       }
-        
+
+      function nextSlide(){
+        if (!currentPresentation) return;
+        if (currentSlideIndex < currentPresentation.slides.length - 1) {
+          currentSlideIndex++;
+          renderSlide();
+          updateSlideCounter();
+          updateSlideProgress();
+        } else {
+          const slideEl = document.getElementById('current-slide');
+          if (slideEl) {
+            slideEl.style.transform = 'scale(0.98)';
+            setTimeout(() => {
+              if (slideEl) slideEl.style.transform = '';
+            }, 200);
+          }
+        }
+      }
+
+      function prevSlide(){
+        if (!currentPresentation) return;
+        if (currentSlideIndex > 0) {
+          currentSlideIndex--;
+          renderSlide();
+          updateSlideCounter();
+          updateSlideProgress();
+        }
+      }
+
+      function updateSlideCounter(){
+        const counter = document.getElementById('slide-counter');
+        if (counter && currentPresentation) {
+          counter.textContent = `${currentSlideIndex + 1} / ${currentPresentation.slides.length}`;
+        }
+      }
+
+      function updateSlideProgress(){
+        const bar = document.getElementById('slide-progress');
+        if (bar && currentPresentation) {
+          const pct = ((currentSlideIndex + 1) / currentPresentation.slides.length) * 100;
+          bar.style.width = pct + '%';
+        }
+      }
+
+      function exitPresentation(){
+        const overlay = document.getElementById('presentation-overlay');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+        currentPresentation = null;
+        currentSlideIndex = 0;
+        document.removeEventListener('keydown', handlePresentationKeydown);
+        const stage = document.getElementById('slide-stage');
+        stage.removeEventListener('touchstart', handleTouchStart);
+        stage.removeEventListener('touchend', handleTouchEnd);
+      }
+
+      function handlePresentationKeydown(e){
+        if (!currentPresentation) return;
+        const key = e.key.toLowerCase();
+        if (key === 'n' || key === 'arrowright' || key === ' ') {
+          e.preventDefault();
+          nextSlide();
+        } else if (key === 'b' || key === 'arrowleft') {
+          e.preventDefault();
+          prevSlide();
+        } else if (key === 'escape') {
+          e.preventDefault();
+          exitPresentation();
+        }
+      }
+
+      function handleTouchStart(e){
+        touchStartX = e.changedTouches[0].screenX;
+      }
+
+      function handleTouchEnd(e){
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      }
+
+      function handleSwipe(){
+        const threshold = 50;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > threshold) {
+          if (diff > 0) {
+            nextSlide();
+          } else {
+            prevSlide();
+          }
+        }
+      }
 
       
         
