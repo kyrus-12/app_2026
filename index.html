@@ -1798,8 +1798,8 @@
 
     <div id="presentation-overlay" class="presentation-overlay">
       <button class="slide-exit-btn" onclick="exitPresentation()">x</button>
-      <button class="slide-nav-btn" onclick="prevSlide()">◀️</button>
-      <button class="slide-nav-btn" onclick="nextSlide()">▶️</button>
+      <button class="slide-nav-btn prev-btn" onclick="prevSlide()">◀️</button>
+      <button class="slide-nav-btn next-btn" onclick="nextSlide()">▶️</button>
       <div class="slide-stage" id="slide-stage"></div>
       <div class="slide-counter" id="slide-counter">1 / 1</div>
       <div class="slide-progress" id="slide-progress" style="width:0%"></div>
@@ -4132,7 +4132,7 @@
         }
 
         const slideEl = document.createElement('div');
-        slideEl.className = 'slide active';
+        slideEl.className = 'slide slide-active';
         slideEl.id = 'current-slide';
         slideEl.innerHTML = contentHtml;
         if (layoutClass) slideEl.classList.add(layoutClass);
