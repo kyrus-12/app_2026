@@ -1795,6 +1795,15 @@
         <p id="login-error" class="login-error hidden">Check your credentials, then try again.</p>
       </div>
     </div>
+
+    <div id="presentation-overlay" class="presentation-overlay">
+      <button class="slide-exit-btn" onclick="exitPresentation()">❎</button>
+      <button class="slide-nav-btn" onclick="prevSlide()">◀️</button>
+      <button class="slide-nav-btn" onclick="nextSlide()">▶️</button>
+      <div class="slide-stage" id="slide-stage"></div>
+      <div class="slide-counter" id="slide-counter">1 / 1</div>
+      <div class="slide-progress" id="slide-progress" style="width:0%"></div>
+    </div>
    
     <script>
 
@@ -4002,6 +4011,138 @@
         openModal(html);
         setTimeout(() => { closeModal(); }, 5000);
       }
+
+      const presentations = [
+        {
+          id: 'particle_model',
+          title: 'The Particle Model',
+          description: 'States of matter',
+          icon: '🫗',
+          slide: [
+            {title: 'The Particle Model of Matter', content: 'All matter is made up of tiny particles that are constantly moving.', layout: 'title'},
+            {title: 'Solid', content: 'Particles are tightly packed and vibrate in place.', image:'https://i.imgur.com/Azm2uK3.jpg', layout: 'image-right'},
+            ]
+        },
+        {
+          id: 'scientific_models',
+          title: 'Scientific Models',
+          description: 'Types and uses of models in science.',
+          icon: '⚛️',
+          slide: [
+            {title: 'What is a scientific model?', content: 'A scientific model is a simplified representations of real object, system, or process.', layout: 'title'},
+            {title: 'Physical Models', content: 'Tangible 3D objects you can see and touch.', image:'https://i.imgur.com/294BfJi.jpg', layout: 'image-right'},
+            ]
+        },
+        ];
+
+      let currentPresentation = null;
+      let currentSlideIndex = 0;
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      function showPresentations(){
+        let html = `
+        <div class="modal-title">Presentations</div>
+        <div class="modal-section">
+        <p style="color:#cbd5e1; font-size:0.9em; margin-bottom:1rem;">Select a presentation to start.</p>
+        <div class="presentation-picker">
+        `;
+        presentations.forEach(p => {
+          html += `
+          <div class="presentation-card" onclick="openPresentation('${p.id}')">
+          <div class="icon">${p.icon}</div>
+          <div class="title">${p.title}</div>
+          <div class="desc">${p.description}</div>
+          <div class="slide-count">${p.slides.length} slides</div>
+          </div>
+          `;
+        });
+        html += `
+        </div>
+        </div>
+        <div class="flex gap-3 mt-4">
+        <button class="btn" onclick="closeModal()">x</button>
+        </div>
+        `;
+        openModal(html);
+      }
+
+      function openPresentation(id){
+        closeModal();
+        currentPresentation = presentation.find(p => p.id === id);
+        if (!currentPresentation) return;
+        currentSlideIndex = 0;
+
+        const overlay = document.getElementById('presentation-overlay');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        renderSlide();
+        updateSlideCounter();
+        updateSlideProgress();
+
+        document.addEventListener('keydown', handlePresentationKeydown);
+        const stage = document.getElementById('slide-stage');
+        stage.addEventListener('touchstart', handleTouchStart, {passive: true});
+        stage.addEventListener('touchend', handleTouchEnd, {passive:true});
+      }
+
+      function renderSlide(){
+        const stage = document.getElementById('slide-stage');
+        const slide = currentPresentation.slides[currentSlideIndex];
+        const total = currentPresentation.slides.length;
+
+        let layoutClass = '';
+        let contentHtml = '';
+
+        if (slide.layout === 'image-left' && slide.image) {
+          layoutClass = 'slide-layout-split';
+          contentHtml = `
+          <div>
+          <img src="${slide.image}" alt="${slide.title}" class="slide-image" onerror="this.style.display='none'">
+          </div>
+          <div>
+          <div class="slide-title">${slide.title}</div>
+          <div class="slide-body">${slide.content}</div>
+          </div>
+          `;
+        } else if (slide.layout === 'image-right' && slide.image) {
+          layoutClass = 'slide-layout-split';
+          contentHtml = `
+          <div>
+          <div class="slide-title">${slide.title}</div>
+          <div class="slide-body">${slide.content}</div>
+          </div>
+          <div>
+          <img src="${slide.image}" alt="${slide.title}" class="slide-image" onerror="this.style.display='none'">
+          </div>
+          `;
+        } else if (slide.layout === 'title') {
+          contentHtml = `
+          <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; height:100%;">
+          <div class="slide-title" style="font-size:2.8rem; margin-bottom:2rem;">${slide.title}</div>
+          <div class="slide-body" style="font-size:1.3rem; max-width:700px;">${slide.content}</div>
+          </div>
+          `;
+        } else {
+          contentHtml = `
+          <div class="slide-title">${slide.title}</div>
+          <div class="slide-body">${slide.content}</div>
+          ${slide.image ? `<img src="${slide.image}" alt="${slide.title}" class="slide-image" onerror="this.style.display='none'">` : ''}
+          `;
+        }
+
+        const slideEl = document.createElement('div');
+        slideEl.className = 'slide active';
+        slideEl.id = 'current-slide';
+        slideEl.innerHTML = contentHtml;
+        if (layoutClass) slideEl.classList.add(layoutClass);
+
+
+        stage.innerHTML = '';
+        stage.appendChild(slideEl);
+      }
+        
 
       
         
