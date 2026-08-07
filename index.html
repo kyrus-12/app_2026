@@ -4018,7 +4018,7 @@
           title: 'The Particle Model',
           description: 'States of matter',
           icon: '🫗',
-          slide: [
+          slides: [
             {title: 'The Particle Model of Matter', content: 'All matter is made up of tiny particles that are constantly moving.', layout: 'title'},
             {title: 'Solid', content: 'Particles are tightly packed and vibrate in place.', image:'https://i.imgur.com/Azm2uK3.jpg', layout: 'image-right'},
             ]
@@ -4028,7 +4028,7 @@
           title: 'Scientific Models',
           description: 'Types and uses of models in science.',
           icon: '⚛️',
-          slide: [
+          slides: [
             {title: 'What is a scientific model?', content: 'A scientific model is a simplified representations of real object, system, or process.', layout: 'title'},
             {title: 'Physical Models', content: 'Tangible 3D objects you can see and touch.', image:'https://i.imgur.com/294BfJi.jpg', layout: 'image-right'},
             ]
@@ -4069,7 +4069,7 @@
 
       function openPresentation(id){
         closeModal();
-        currentPresentation = presentation.find(p => p.id === id);
+        currentPresentation = presentations.find(p => p.id === id);
         if (!currentPresentation) return;
         currentSlideIndex = 0;
 
