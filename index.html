@@ -3508,6 +3508,8 @@
 
       function renderTopics(){
         const container = document.getElementById('step-0');
+        if (!container) return;
+        
         container.innerHTML = '';
 
         const allowed = (currentUser && currentUser.subjects) ? currentUser.subjects : [];
@@ -3527,7 +3529,12 @@
           <div class="text-3xl">${t.icon}</div>
           </div>`;
           div.addEventListener('click', () => handleTopicClick(t.id));
-          div.addEventListener('keypress', (e) => {if (e.key === 'Enter') handleTopicClick(t.id); });
+          div.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleTopicClick(t.id); 
+            }
+          });
           container.appendChild(div);
         });
 
@@ -4304,8 +4311,6 @@
           icon.textContent = '☰';
         }
       }
-
-      checkAuth();
 
     </script>
   </body>
