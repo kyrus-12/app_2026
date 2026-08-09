@@ -1624,12 +1624,6 @@
       </div>
 
       <div class="grid gap-6" id="step-0">
-        <div class="card p-6 cursor-pointer" id="topic-science" role="button" tabIndex="0">
-          <div class="flex items-center justify-between">
-            <div><h3 class="text-xl font-bold text-blue-100">Science</h3><p class="text-sm text-gray-400 mt-1">Explore Physics, Chemistry and Biology</p></div>
-            <div class="text-3xl">👩🏻‍🔬</div>
-          </div>
-        </div>
       </div>
 
       <div class="hidden grid grid-cols-1 md:grid-cols-3 gap-6" id="step-1"></div>
@@ -1813,13 +1807,29 @@
    
     <script>
 
+      const TOPICS = [
+        {id:'science', title:'Science', desc:'Explore physics, chemistry and biology', icon:'👩🏻‍🔬'},
+        {id:'math', title:'Math', desc:'Explore algebra, geometry and statistics', icon:'🔢'},
+        {id:'english', title:'English', desc:'Explore grammar, reading and writing', icon:'✍'},
+        ];
+
       
    const topics = [
      {id:'science', title:'Science', subtopics:[
        {id:'physics', title:'Physics', description:'To be followed'},
        {id:'chemistry', title:'Chemistry', description:'To be followed'},
        {id:'biology', title:'Biology', description:'To be followed'}
-       ]}
+       ]},
+      {id:'math', title:'Math', subtopics:[
+       {id:'algebra', title:'Algebra', description:'To be followed'},
+       {id:'geometry', title:'Geometry', description:'To be followed'},
+       {id:'statistics', title:'Statistics', description:'To be followed'}
+       ]},
+      {id:'english', title:'English', subtopics:[
+       {id:'grammar', title:'Grammar', description:'To be followed'},
+       {id:'reading', title:'Reading', description:'To be followed'},
+       {id:'writing', title:'Writing', description:'To be followed'}
+       ]},
      ];
       
       const proficiencyLevels = [
@@ -3528,6 +3538,7 @@
         if (overlay) overlay.style.display = 'none';
 
         updateUserDisplay();
+        renderTopics();
       }
 
       function userDisplay() {
