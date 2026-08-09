@@ -3506,6 +3506,36 @@
       let currentUser = null;
       let questionStartTime = null;
 
+      function renderTopics(){
+        const container = document.getElementById('step-0');
+        container.innerHTML = '';
+
+        const allowed = (currentUser && currentUser.subjects) ? currentUser.subjects : [];
+
+        TOPICS.filter(t => allowed.includes(t.id)).forEach(t => {
+          const div = document.createElement('div');
+          div.className = 'card p-6 cursor-pointer';
+          div.id = `topic-${t.id}`;
+          div.setAttribute('role', 'button');
+          div.tabIndex = 0;
+          div.innerHTML = `
+          <div class="flex items-center justify-between">
+          <div>
+          <h3 class="text-xl font-bold text-blue-100">${t.title}</h3>
+          <p class="text-sm text-gray-400 mt-1">${t.desc}</p>
+          </div>
+          <div class="text-3xl">${t.icon}</div>
+          </div>`;
+          div.addEventListener('click', () => handleTopicClick(t.id));
+          div.addEventListener('keypress', (e) => {if (e.key === 'Enter') handleTopicClick(t.id); });
+          container.appendChild(div);
+        });
+
+        if (container.children.length === 0){
+          container.innerHTML = `<p class="text-sm text-gray-400 text-center">You are not enrolled in any topics yet.</p>`;
+        }
+      }
+
       function handleLogin() {
         const code = document.getElementById('login-code').value.trim().toUpperCase();
         const username = document.getElementById('login-username').value;
