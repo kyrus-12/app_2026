@@ -3497,10 +3497,10 @@
       }
       
       const ENROLLED_CODES = {
-        'VERTUDAZO_JOHNRENZ_RIZAL': {role: 'student', password: 'jrv12345'},
-        'RUS_JOHNKY_RIZAL': {role: 'student', password: 'jkr98765'},
-        'ADMIN2026': {role: 'admin', password:'admin'},
-        'GUEST2026': {role: 'guest', password:'guest'}
+        'VERTUDAZO_JOHNRENZ_RIZAL': {role: 'student', password: 'jrv12345', subjects:['science']},
+        'RUS_JOHNKY_RIZAL': {role: 'student', password: 'jkr98765', subjects:['science', 'math']},
+        'ADMIN2026': {role: 'admin', password:'admin', subjects:['science', 'math', 'english']},
+        'GUEST2026': {role: 'guest', password:'guest', subjects:['science', 'math', 'english']}
       };
 
       let currentUser = null;
@@ -3544,6 +3544,7 @@
       function userDisplay() {
         const oldBadge = document.getElementById('user-badge');
         if (oldBadge) oldBadge.remove();
+        renderTopics();
       }
 
       function logoutUser() {
