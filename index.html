@@ -4466,7 +4466,7 @@
 
       const TEST_MUSIC = {
         'Use of Models': 'https://www.youtube.com/embed/UaRrDZWhtWA',
-        'The Particle Model': 'https://www.youtube.com/embed/5u1GjIeaRSk';
+        'The Particle Model': 'https://www.youtube.com/embed/5u1GjIeaRSk',
       };
 
       function extractYoutubeId(url){
@@ -4480,7 +4480,7 @@
       let currentTrackUrl = null;
       let pendingVideoId = null;
 
-      function onYoutubeIframeAPIReady(){
+      function onYouTubeIframeAPIReady(){
         ytPlayer = new YT.Player('yt-player-container', {
           height:'200',
           width:'200',
@@ -4519,15 +4519,15 @@
       function playBackgroundTrack(url){
         if (!url || currentTrackUrl === url) return;
         currentTrackUrl = url;
-        const videoId = extractYoutubeId(url);
+        const videoId = extractYouTubeId(url);
         if (!ytReady){
           pendingVideoId = videoId;
           return;
         }
-        playYoutubeTrack(videoId);
+        playYouTubeTrack(videoId);
       }
 
-      function playYoutubeTrack(videoId){
+      function playYouTubeTrack(videoId){
         if (!ytReady || !ytPlayer) return;
         ytPlayer.loadVideoById(videoId);
         if (musicEnabled) {
