@@ -1646,6 +1646,42 @@
       .flash-incorrect{
         animation:flashIncorrect 0.9s ease-out;
       }
+      #streak-fire{
+        display:inline-block;
+        transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1), filter 0.3s ease;
+      }
+      .fire-tier-0{
+        font-size:0.9rem;
+        filter:grayscale(70%) opacity(0.6);
+        transform:scale(0.9);
+      }
+      .fire-tier-1{
+        font-size:1rem;
+        filter:none;
+        transform:scale(1);
+      }
+      .fire-tier-2{
+        font-size:1.3rem;
+        filter:saturate(1.3);
+        transform:scale(1.15);
+      }
+      .fire-tier-3{
+        font-size:1.6rem;
+        filter:saturate(1.6) drop-shadow(0 0 16px rgba(249,115,22,0.6));
+        transform:scale(1.3);
+        animation:firePulse 1.2s ease-in-out infinite;
+      }
+      .fire-tier-4{
+        font-size:2rem;
+        filter:saturate(1.8) drop-shadow(0 0 12px rgba(239,68,68,0.85));
+        transform:scale(1.5);
+        animation:firePulse 0.9s ease-in-out infinite;
+      }
+      @keyframes firePulse{
+        0%, 100% { transform:scale(var(--pulse-base, 1.3)); }
+        50% { transform:scale(calc(var(--pulse-base, 1.3) * 1.08)); }
+      }
+      
         
     </style>
   </head>
@@ -1748,7 +1784,7 @@
               <div class="quiz-stats" id="quiz-stats-bar">
                 <span>Question <span id="current-q-num">1</span> of <span id="total-q-num">10</span></span>
                 <span>Score: <span id="score-display">0</span>/<span id="total-attempted">0</span></span>
-                <span>Streak: <span id="streak-display">0</span>🐦‍🔥</span>
+                <span>Streak: <span id="streak-display">0</span><span id="streak-fire" class="fire-tier-0">🐦‍🔥</span></span>
               </div>
               <div class="quiz-progress" id="quiz-progress"></div>
               <div class="chat-area" id="chat-area"></div>
@@ -2832,6 +2868,7 @@
         quizAttempted++;
         if(isCorrect) quizScore++;
         if(isCorrect){ quizStreak++; } else { quizStreak = 0; }
+        saveStreak();
 
         const durationSec = questionStartTime ? ((Date.now() - questionStartTime) / 1000).toFixed(1) : '0:0';
         quizHistory.push({
@@ -2855,11 +2892,12 @@
           chatArea.classList.add(isCorrect ? 'flash-correct' : 'flash-incorrect');
           showResultFlash(isCorrect);
 
-          const streakNote = (isCorrect && quizStreak >= 3) ? `\n\n🐦‍🔥 ${quizStreak} in a row!` : ''; 
+          const tier = getFireTier(quizStreak);
+          const streakNote = (isCorrect && quizStreak >= 3) ? `\n\n<span class="fire-tier-${tier}" style="display:inline-block;">🐦‍🔥</span> ${quizStreak} in a row!` : ''; 
           
           if(isCorrect){
             const exp = q.explanation ?`\n\n 🧠 ${q.explanation}` : '';
-            addChatMessage('bot', `✅ Correct! The answer is: ${q.a}${exp}`);
+            addChatMessage('bot', `✅ Correct! The answer is: ${q.a}${exp}${streakNote}`);
           } else {
             const exp = q.explanation ?`\n\n 🧠 ${q.explanation}` : '';
             addChatMessage('bot', `❌ Incorrect. The correct answer is: ${q.a}${exp}`);
@@ -3001,6 +3039,7 @@
         document.getElementById('current-q-num').textContent = Math.min(quizCurrentIndex + 1, total);
         document.getElementById('score-display').textContent = quizScore;
         document.getElementById('streak-display').textContent = quizStreak;
+        updateStreakFireVisual();
         document.getElementById('total-attempted').textContent = quizAttempted;
         
         const progressDiv = document.getElementById('quiz-progress');
@@ -3070,8 +3109,6 @@
           }, 400);
         }, 800);
       }
-
-      let quizStreak = 0;
       
       function resetQuiz(){
         quizQuestions = [];
@@ -3636,6 +3673,7 @@
         };
 
         localStorage.setItem('app2026_user', JSON.stringify(currentUser));
+        loadStreak();
         const overlay = document.getElementById('login-overlay');
         if (overlay) overlay.style.display = 'none';
 
@@ -3661,6 +3699,7 @@
         const saved = localStorage.getItem('app2026_user');
         if (saved) {
           currentUser = JSON.parse(saved);
+          loadStreak();
           const overlay = document.getElementById('login-overlay');
           if (overlay) overlay.style.display = 'none';
           updateUserDisplay();
@@ -3705,6 +3744,9 @@
 
         const descData = JSON.parse(localStorage.getItem('app2026_descriptor_progress') || '{}');
         const skillData = JSON.parse(localStorage.getItem('app2026_skill_progress') || '{}');
+        const certFireTier = getFireTier(quizStreak);
+        const certFireSize = ['1.4rem', '1.8rem', '2.2rem', '2.6rem', '3.2rem'][certFireTier];
+        const certFireGlow = ['none', 'none', 'drop-shadow(0 0 4px rgba(249,115,22,0.5))', 'drop-shadow(0 0 8px rgba(239,68,68,0.6))', 'drop-shadow(0 0 14px rgba(230,38,38,0.8))'][certFireTier];
 
         let descriptorHtml = '';
         const descKeys = Object.keys(descData);
@@ -3915,6 +3957,11 @@
         ${descriptorHtml}
 
         ${skillHtml}
+
+        <div style="text-align:center; margin:24px 0; background:#fff7ed; border-radius:12px; padding:16px; border:2px solid #f59e0b;">
+        <div style="font-size:${certFireSize}; filter:${certFireGlow};">🐦‍🔥</div>
+        <div style="font-weight:700; color:#b45309; font-size:1.1rem;">Current Streak: ${quizStreak} correct in a row!</div>
+        </div>
         
         <div style="text-align:center; margin-top:30px;">
         <div class="badge">COMPLETED</div>
@@ -4370,6 +4417,33 @@
         document.body.appendChild(wrap);
 
         setTimeout(() => wrap.remove(), 2000);
+      }
+
+      let quizStreak = 0;
+
+      function saveStreak(){
+        if (!currentUser) return;
+        localStorage.setItem(`app2026_streak_${currentUser.code}`, quizStreak);
+      }
+
+      function loadStreak(){
+        if (!currentUser){ quizStreak = 0; return; }
+        const saved = localStorage.getItem(`app2026_streak_${currentUser.code}`);
+        quizStreak = saved ? parseInt(saved, 10) : 0;
+      }
+
+      function getFireTier(streak){
+        if (streak >= 10) return 4;
+        if (streak >= 6) return 3;
+        if (streak >= 3) return 2;
+        if (streak >= 1) return 1;
+        return 0;
+      }
+
+      function updateStreakFireVisual(){
+        const fireEl = document.getElementById('streak-fire');
+        if (!fireEl) return;
+        fireEl.className = `fire-tier-${getFireTier(quizStreak)}`;
       }
 
       
