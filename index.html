@@ -4469,7 +4469,7 @@
         'The Particle Model': 'https://www.youtube.com/embed/5u1GjIeaRSk',
       };
 
-      function extractYoutubeId(url){
+      function extractYouTubeId(url){
         const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([A-Za-z0-9_-]{11})/);
         return match ? match[1] : url;
       }
@@ -4499,7 +4499,7 @@
               ytPlayer.setVolume(25);
               if (!musicEnabled) ytPlayer.mute();
               if (pendingVideoId) {
-                playYoutubeTrack(pendingVideoId);
+                playYouTubeTrack(pendingVideoId);
                 pendingVideoId = null;
               }
             },
@@ -4510,7 +4510,7 @@
               }
             },
             onError: (e) => {
-              console.error('Youtube Player Error:', e.data);
+              console.error('YouTube Player Error:', e.data);
             }
           }
         });
