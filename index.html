@@ -1631,6 +1631,20 @@
         80% {transform:scale(1); opacity:1;}
         100% {transform:scale(0.9); opacity:0;}
       }
+      @keyframes flashCorrect{
+        0% {box-shadow: 0 0 0 0 rgba(34,197,94,0.5);}
+        100% {box-shadow: 0 0 0 14px rgba(34,197,94,0);}
+      }
+      @keyframes flashIncorrect{ 
+        0% {box-shadow: 0 0 0 0 rgba(239,68,68,0.5);}
+        100% {box-shadow: 0 0 0 14px rgba(239,68,68,0);}
+      }
+      .flash-correct{
+        animation:flashCorrect 0.9s ease-out;
+      }
+      .flash-incorrect{
+        animation:flashIncorrect 0.9s ease-out;
+      }
         
     </style>
   </head>
@@ -1733,6 +1747,7 @@
               <div class="quiz-stats" id="quiz-stats-bar">
                 <span>Question <span id="current-q-num">1</span> of <span id="total-q-num">10</span></span>
                 <span>Score: <span id="score-display">0</span>/<span id="total-attempted">0</span></span>
+                <span>Streak: <span id="streak-display">0</span>🔥</span>
               </div>
               <div class="quiz-progress" id="quiz-progress"></div>
               <div class="chat-area" id="chat-area"></div>
@@ -2815,6 +2830,7 @@
         
         quizAttempted++;
         if(isCorrect) quizScore++;
+        if(isCorrect){ quizStreak++; } else { quizStreak = 0; }
 
         const durationSec = questionStartTime ? ((Date.now() - questionStartTime) / 1000).toFixed(1) : '0:0';
         quizHistory.push({
@@ -2832,7 +2848,13 @@
         setTimeout(() => {
           removeTypingIndicator();
 
+          const chatArea = document.getElementById('chat-area');
+          chatArea.classList.remove('flash-correct', 'flash-incorrect');
+          void chatArea.offsetWidth;
+          chatArea.classList.add(isCorrect ? 'flash-correct' : 'flash-incorrect');
           showResultFlash(isCorrect);
+
+          const streakNote = (isCorrect && quizStreak >= 3) ? `\n\n🔥 ${quizStreak} in a row!` : ''; 
           
           if(isCorrect){
             const exp = q.explanation ?`\n\n 🧠 ${q.explanation}` : '';
@@ -2977,6 +2999,7 @@
         document.getElementById('total-q-num').textContent = total;
         document.getElementById('current-q-num').textContent = Math.min(quizCurrentIndex + 1, total);
         document.getElementById('score-display').textContent = quizScore;
+        document.getElementById('streak-display').textContent = quizStreak;
         document.getElementById('total-attempted').textContent = quizAttempted;
         
         const progressDiv = document.getElementById('quiz-progress');
@@ -3046,6 +3069,8 @@
           }, 400);
         }, 800);
       }
+
+      let quizStreak = 0;
       
       function resetQuiz(){
         quizQuestions = [];
@@ -3054,6 +3079,7 @@
         quizAttempted = 0;
         quizAnswered = false;
         quizHistory = [];
+        quizStreak = 0;
       }
       
       function goHome(){ showHomeModal(); }
