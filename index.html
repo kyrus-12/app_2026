@@ -1688,6 +1688,9 @@
 
   <body class="min-h-screen pb-footer">
 
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <div id="yt-player-container" style="position:fixed; bottom:0; left:-9999px; width:200px; height:200px; opacity:0; pointer-events:none;"></div>
+
     <svg id="app-circuit-bg" xlmns="http://www.w3.org/2000/svg"></svg>
 
     <header class="sticky top-0 z-40">
@@ -2326,6 +2329,9 @@
       
       function handleModeClick(mode){
         selectedMode = mode; selectedTestName=null;
+        if (mode === 'skill'){
+          playBackgroundTrack(SKILL_MODE_AMBIENT);
+        }
         currentStep = 3; updateUI();
       }
       
@@ -2338,6 +2344,7 @@
       }
       
       function handleBack(){
+        stopBackgroundTrack();
         selectedProficiency = null;
         selectedSkill = null;
         if(currentStep === 4){ currentStep = 3; selectedTestName=null; resetQuiz(); }
@@ -2391,6 +2398,7 @@
       }
       
       function resetSelections(){
+        stopBackgroundTrack();
         currentStep = 0;
         selectedTopic=null; selectedSubtopic=null; selectedMode=null;
         selectedProficiency=null; selectedSkill=null; selectedTestName=null;
@@ -2674,6 +2682,7 @@
       function startQuiz(testName){
         selectedTestName = testName;
         updateBreadcrumb();
+        playBackgroundTrack(TEST_MUSIC[testName] || SKILL_MODE_AMBIENT);
         
         const key = `${selectedSubtopic}_${selectedSkill}`;
         const testData = skillQuestions[key];
@@ -3249,6 +3258,12 @@
         <div class="setting-row">
         <span class="setting-label">Dark</span>
         <div class="toggle-switch ${currentTheme === 'dark' ? 'active' : ''}" onclick="toggleTheme()" id="theme-toggle"></div>
+        </div>
+        <div class="setting-row">
+        <span class="setting-label">Background Music</span>
+        <button class="btn text-xs" onclick="toggleMusic()" title="Toggle Music">
+        <span id="music-icon">${musicEnabled ? '🔊' : '🔇'}</span>
+        </button>
         </div>
         </div>
         <div class="modal-section">
@@ -4445,6 +4460,101 @@
         const fireEl = document.getElementById('streak-fire');
         if (!fireEl) return;
         fireEl.className = `fire-tier-${getFireTier(quizStreak)}`;
+      }
+
+      const SKILL_MODE_AMBIENT = 'https://www.youtube.com/embed/5dpFlo_rNSE';
+
+      const TEST_MUSIC = {
+        'Use of Models': 'https://www.youtube.com/embed/UaRrDZWhtWA',
+        'The Particle Model': 'https://www.youtube.com/embed/5u1GjIeaRSk';
+      };
+
+      function extractYoutubeId(url){
+        const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([A-Za-z0-9_-]{11})/);
+        return match ? match[1] : url;
+      }
+
+      let musicEnabled = localStorage.getItem('app2026_music') !== 'off';
+      let ytPlayer = null;
+      let ytReady = false;
+      let currentTrackUrl = null;
+      let pendingVideoId = null;
+
+      function onYoutubeIframeAPIReady(){
+        ytPlayer = new YT.Player('yt-player-container', {
+          height:'200',
+          width:'200',
+          playerVars: {
+            autoplay:0,
+            controls:0,
+            disablekb:1,
+            fs:0,
+            modestbranding:1,
+            enablejsapi:1,
+            playsinline:1,
+          },
+          events: {
+            onReady: () => {
+              ytReady = true;
+              ytPlayer.setVolume(25);
+              if (!musicEnabled) ytPlayer.mute();
+              if (pendingVideoId) {
+                playYoutubeTrack(pendingVideoId);
+                pendingVideoId = null;
+              }
+            },
+            onStateChange: (e) => {
+              if (e.data === YT.PlayerState.ENDED){
+                ytPlayer.seekTo(0);
+                ytPlayer.playVideo();
+              }
+            },
+            onError: (e) => {
+              console.error('Youtube Player Error:', e.data);
+            }
+          }
+        });
+      }
+
+      function playBackgroundTrack(url){
+        if (!url || currentTrackUrl === url) return;
+        currentTrackUrl = url;
+        const videoId = extractYoutubeId(url);
+        if (!ytReady){
+          pendingVideoId = videoId;
+          return;
+        }
+        playYoutubeTrack(videoId);
+      }
+
+      function playYoutubeTrack(videoId){
+        if (!ytReady || !ytPlayer) return;
+        ytPlayer.loadVideoById(videoId);
+        if (musicEnabled) {
+          ytPlayer.unMute();
+          ytPlayer.playVideo();
+        } else {
+          ytPlayer.mute();
+        }
+      }
+
+      function stopBackgroundTrack(){
+        currentTrackUrl = null;
+        if (ytReady) ytPlayer.stopVideo();
+      }
+
+      function toggleMusic(){
+        musicEnabled = !musicEnabled;
+        localStorage.setItem('app2026_music', musicEnabled ? 'on' : 'off');
+        const icon = document.getElementById('music-icon');
+        if (icon) icon.textContent = musicEnabled ? '🔊' : '🔇';
+        if (!ytReady) return;
+        if (musicEnabled) {
+          ytPlayer.unMute();
+          ytPlayer.playVideo();
+        } else {
+          ytPlayer.mute();
+        }
       }
 
       
