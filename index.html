@@ -1748,7 +1748,7 @@
               <div class="quiz-stats" id="quiz-stats-bar">
                 <span>Question <span id="current-q-num">1</span> of <span id="total-q-num">10</span></span>
                 <span>Score: <span id="score-display">0</span>/<span id="total-attempted">0</span></span>
-                <span>Streak: <span id="streak-display">0</span>🔥</span>
+                <span>Streak: <span id="streak-display">0</span>🐦‍🔥</span>
               </div>
               <div class="quiz-progress" id="quiz-progress"></div>
               <div class="chat-area" id="chat-area"></div>
@@ -2855,7 +2855,7 @@
           chatArea.classList.add(isCorrect ? 'flash-correct' : 'flash-incorrect');
           showResultFlash(isCorrect);
 
-          const streakNote = (isCorrect && quizStreak >= 3) ? `\n\n🔥 ${quizStreak} in a row!` : ''; 
+          const streakNote = (isCorrect && quizStreak >= 3) ? `\n\n🐦‍🔥 ${quizStreak} in a row!` : ''; 
           
           if(isCorrect){
             const exp = q.explanation ?`\n\n 🧠 ${q.explanation}` : '';
