@@ -1681,6 +1681,21 @@
         0%, 100% { transform:scale(var(--pulse-base, 1.3)); }
         50% { transform:scale(calc(var(--pulse-base, 1.3) * 1.08)); }
       }
+      .lesson-unlock-row{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding:0.6rem 0.8rem;
+        background:var(--card);
+        border:1px solid rgba(96,165,250,0.12);
+        border-radius:0.5rem;
+        font-size:0.85rem;
+        cursor:pointer;
+        transition:border-color 0.2s ease;
+      }
+      .lesson-unlock-row:hover{
+        border-color:var(--color-primary);
+      }
       
         
     </style>
@@ -3297,6 +3312,16 @@
         </div>
         <div class="modal-section">
         <h4>Account</h4>
+        ${currentUser && currentUser.role === 'guest' ? `
+        <div class="modal-section">
+        <h4>Unlock Lessons</h4>
+        <div class="flex gap-3 mt-2">
+        <button class="btn w-full" onclick="showLessonUnlockList('descriptor')">Descriptor-Based</button>
+        <button class="btn w-full" onclick="showLessonUnlockList('skill')">Skill-Based</button>
+        </div>
+        <div id="lesson-unlock-list" class="hidden mt-3" style="display:flex; flex-direction:column; gap:0.5rem; max-height:240px; overflow-y:auto;"></div>
+        </div>
+        ` : ''}
         <div class="p-3 rounded-lg mb-3" style="background:rgba(96,165,250,0.08); border:1px solid rgba(96,165,250,0.15);">
         <div class="text-sm font-bold text-blue-100">
         ${currentUser ? currentUser.name + ' ■ ' + currentUser.code : 'Guest'}
@@ -4556,6 +4581,53 @@
           ytPlayer.mute();
         }
       }
+
+      const LESSON_LIST = [
+        {type:'descriptor', levelKey:'chemistry_1', moduleName:'use of models', label:'Use of Models'},
+        {type:'descriptor', levelKey:'chemistry_1', moduleName:'the particle model', label:'The Particle Model'},
+        {type:'descriptor', levelKey:'chemistry_1', moduleName:'planning, following and recording scientific investigations', label:'Scientific Investigations'},
+        {type:'descriptor', levelKey:'chemistry_2', moduleName:'use of models', label:'Use of Models'},
+        {type:'descriptor', levelKey:'chemistry_2', moduleName:'the particle model', label:'The Particle Model'},
+        {type:'descriptor', levelKey:'chemistry_2', moduleName:'planning, following and recording scientific investigations', label:'Scientific Investigations'},
+        {type:'descriptor', levelKey:'chemistry_3', moduleName:'use of models', label:'Use of Models'},
+        {type:'descriptor', levelKey:'chemistry_3', moduleName:'the particle model', label:'The Particle Model'},
+        {type:'descriptor', levelKey:'chemistry_3', moduleName:'planning, following and recording scientific investigations', label:'Scientific Investigations'},
+        {type:'skill', levelKey:'chemistry_1', moduleName:'use of models', label:'Use of Models'},
+        {type:'skill', levelKey:'chemistry_1', moduleName:'the particle model', label:'The Particle Model'},
+        {type:'skill', levelKey:'chemistry_1', moduleName:'planning, following and recording scientific investigations', label:'Scientific Investigations'},
+        {type:'skill', levelKey:'chemistry_2', moduleName:'use of models', label:'Use of Models'},
+        {type:'skill', levelKey:'chemistry_2', moduleName:'the particle model', label:'The Particle Model'},
+        {type:'skill', levelKey:'chemistry_2', moduleName:'planning, following and recording scientific investigations', label:'Scientific Investigations'},
+        {type:'skill', levelKey:'chemistry_3', moduleName:'use of models', label:'Use of Models'},
+        {type:'skill', levelKey:'chemistry_3', moduleName:'the particle model', label:'The Particle Model'},
+        {type:'skill', levelKey:'chemistry_3', moduleName:'planning, following and recording scientific investigations', label:'Scientific Investigations'},
+        ];
+
+      function showLessonUnlockList(type){
+        const lessons = LESSON_LIST.filter(l => l.type === type);
+        const listHtml = lessons.map(l => {
+          const locked = isModuleLocked(l.type, l.levelKey, l.moduleName);
+          return `
+          <div class="lesson-unlock-row" onclick="${locked ? `unlockLessonFromSettings('${l.type}', '${l.levelKey}', '${l.moduleName.replace(/'/g,"\\'")}')` : ''}">
+          <span>${l.label}</span>
+          <span>${locked ? '🔒 Locked' : '🔓 Unlocked'}</span>
+          </div>`;
+        }).join('');
+
+        const container = document.getElementById('lesson-unlock-list');
+        container.innerHTML = listHtml;
+        continer.classList.remove('hidden');
+      }
+
+      function unlockLessonFromSettings(type, levelKey, moduleName){
+        unlockModule(type, levelKey, moduleName);
+        showLessonUnlockList(type);
+        if (selectedMode === type) updateUI();
+      }
+
+
+
+
 
       
         
