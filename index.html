@@ -1917,6 +1917,72 @@
       <div class="slide-counter" id="slide-counter">1 / 1</div>
       <div class="slide-progress" id="slide-progress" style="width:0%"></div>
     </div>
+
+    <div id="mood-overlay">
+      <div class="mood-card">
+        <button class="mood-close" onclick="skipMoodCheck()" title="Close">x</button>
+
+        <div class="mood-title">How are you feeling today?</div>
+        <div class="mood-sub">Choose an emoji that best describes your mood</div>
+
+        <div class="mood-emoji-grid" id="mood-emoji-grid">
+          <button class="mood-emoji-btn" data-mood="happy" onclick="selectMood(this)">
+            <span class="emoji">😁</span>
+            <span class="label">Happy</span>
+          </button>
+          <button class="mood-emoji-btn" data-mood="excited" onclick="selectMood(this)">
+            <span class="emoji">🤩</span>
+            <span class="label">Excited</span>
+          </button>
+          <button class="mood-emoji-btn" data-mood="neutral" onclick="selectMood(this)">
+            <span class="emoji">🙂</span>
+            <span class="label">Neutral</span>
+          </button>
+          <button class="mood-emoji-btn" data-mood="tired" onclick="selectMood(this)">
+            <span class="emoji">🫩</span>
+            <span class="label">Tired</span>
+          </button>
+          <button class="mood-emoji-btn" data-mood="anxious" onclick="selectMood(this)">
+            <span class="emoji">😰</span>
+            <span class="label">Anxious</span>
+          </button>
+          <button class="mood-emoji-btn" data-mood="sad" onclick="selectMood(this)">
+            <span class="emoji">😢</span>
+            <span class="label">Sad</span>
+          </button>
+          <button class="mood-emoji-btn" data-mood="motivated" onclick="selectMood(this)">
+            <span class="emoji">🤗</span>
+            <span class="label">Motivated</span>
+          </button>
+          <button class="mood-emoji-btn" data-mood="curious" onclick="selectMood(this)">
+            <span class="emoji">🧐</span>
+            <span class="label">Curious</span>
+          </button>
+          <button class="mood-emoji-btn" data-mood="confident" onclick="selectMood(this)">
+            <span class="emoji">😉</span>
+            <span class="label">Confident</span>
+          </button>
+          <button class="mood-emoji-btn" data-mood="unwell" onclick="selectMood(this)">
+            <span class="emoji">🤒</span>
+            <span class="label">Unwell</span>
+          </button>
+        </div>
+
+        <div class="mood-field">
+          <label for="mood-ready">Why do you feel this way?</label>
+          <textarea id="mood-reason" rows="2" placeholder="Explain your feeling here..."></textarea>
+        </div>
+
+        <div class="mood-field">
+          <label for="mood-ready">Are you ready to learn today?</label>
+          <textarea id="mood-reason" rows="2" placeholder="Explain your insights here..."></textarea>
+        </div>
+
+        <button class="mood-save-btn" id="mood-save-btn" onclick="saveMoodCheck()">Save & Continue</button>
+      </div>
+    </div>
+        
+            
    
     <script>
       
